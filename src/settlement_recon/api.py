@@ -14,7 +14,7 @@ from typing import Annotated
 from uuid import uuid4
 
 import anyio
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest
@@ -25,6 +25,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from settlement_recon.domain import MAX_BYTES, DomainError, FileArchive, Reconciler
+from settlement_recon.schemas import ReconciliationExplanation
 
 logger = logging.getLogger("settlement_recon")
 bearer = HTTPBearer(auto_error=False)
@@ -145,7 +146,7 @@ def create_app(
 
     @app.exception_handler(DomainError)
     async def domain_failure(_request: Request, error: DomainError):
-        code = 404 if error.code == "not_found" else 413 if error.code == "size" else 422
+        code = {"not_found": 404, "size": 413, "integrity": 503}.get(error.code, 422)
         return JSONResponse({"detail": str(error), "code": error.code}, status_code=code)
 
     @app.exception_handler(SQLAlchemyError)
@@ -256,6 +257,15 @@ def create_app(
     @app.get("/v1/reconciliation", dependencies=[Depends(authenticate)])
     def reconciliation():
         return service.reconcile()
+
+    @app.get(
+        "/v1/reconciliation/{payment_id}/{currency}/explanation",
+        dependencies=[Depends(authenticate)],
+        tags=["Reconciliation evidence"],
+        response_model=ReconciliationExplanation,
+    )
+    def explain(payment_id: str, currency: str, limit: Annotated[int, Query(ge=1, le=100)] = 25):
+        return service.explain_payment(payment_id, currency, limit=limit)
 
     @app.get("/v1/batches", dependencies=[Depends(authenticate)])
     def list_batches():

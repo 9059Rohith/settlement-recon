@@ -4,6 +4,39 @@ import subprocess
 import sys
 
 
+def test_cli_explains_real_demo_without_mutating_receipts(tmp_path):
+    env = dict(os.environ, DATA_DIR=str(tmp_path), PYTHONPATH="src")
+    subprocess.run(
+        [sys.executable, "-m", "settlement_recon.cli", "demo"],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=30,
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "settlement_recon.cli",
+            "explain",
+            "demo-partial",
+            "INR",
+            "--limit",
+            "5",
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    evidence = json.loads(result.stdout)
+    assert evidence["status"] == "partial"
+    assert evidence["totals"]["difference_minor"] == 40000
+    assert evidence["settlements"]["total_rows"] == 1
+
+
 def test_cli_demo_and_replay_survive_process_restart(tmp_path):
     env = dict(os.environ, DATA_DIR=str(tmp_path), PYTHONPATH="src")
     for _ in range(2):

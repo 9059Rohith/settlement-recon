@@ -198,6 +198,27 @@ def parse(kind: str, raw: bytes) -> list[dict]:
         raise DomainError("Invalid encoding, JSON, CSV or timestamp") from None
 
 
+def classify_reconciliation(value) -> dict:
+    """One matching-rule implementation for summary and detailed evidence."""
+    row = {
+        key: int(item) if key.endswith("minor") or key == "settlement_rows" else item
+        for key, item in value.items()
+    }
+    has_payment = row.pop("has_payment")
+    if not has_payment:
+        row["status"] = "orphan"
+    elif row["settlement_rows"] == 0:
+        row["status"] = "missing"
+    elif row["settled_minor"] == row["expected_minor"]:
+        row["status"] = "matched"
+    elif row["settled_minor"] < row["expected_minor"]:
+        row["status"] = "partial"
+    else:
+        row["status"] = "overpaid"
+    row["difference_minor"] = row["expected_minor"] - row["settled_minor"]
+    return row
+
+
 class Reconciler:
     def __init__(self, database_url: str, archive: Archive):
         self.archive = archive
@@ -347,6 +368,11 @@ class Reconciler:
             raise DomainError("Batch not found", "not_found")
         return hashlib.sha256(self.archive.read(checksum)).hexdigest() == checksum
 
+    def explain_payment(self, payment_id: str, currency: str, *, limit: int = 25) -> dict:
+        from settlement_recon.explanation import explain_payment
+
+        return explain_payment(self.engine, payment_id, currency, limit)
+
     def reconcile(self, limit=10000, *, payment_ids=None, source=None) -> list[dict]:
         # A single UNION statement gives expected + orphan groups one database snapshot.
         settlement_query = select(
@@ -397,23 +423,4 @@ class Reconciler:
         query = select(combined).order_by(combined.c.payment_id, combined.c.currency).limit(limit)
         with self.engine.connect() as connection:
             values = connection.execute(query).mappings().all()
-        result = []
-        for value in values:
-            row = {
-                k: int(v) if k.endswith("minor") or k == "settlement_rows" else v
-                for k, v in value.items()
-            }
-            has_payment = row.pop("has_payment")
-            if not has_payment:
-                row["status"] = "orphan"
-            elif row["settlement_rows"] == 0:
-                row["status"] = "missing"
-            elif row["settled_minor"] == row["expected_minor"]:
-                row["status"] = "matched"
-            elif row["settled_minor"] < row["expected_minor"]:
-                row["status"] = "partial"
-            else:
-                row["status"] = "overpaid"
-            row["difference_minor"] = row["expected_minor"] - row["settled_minor"]
-            result.append(row)
-        return result
+        return [classify_reconciliation(value) for value in values]

@@ -14,5 +14,7 @@
 | Documentation / developer productivity | operator CLI, ADRs, recovery and release guide | CLI tests and documented reproduction commands |
 | Actual public deployment / durable recovery | Vercel Docker + isolated Neon PostgreSQL; database raw archive; serialized cold-start DDL | live HTTPS readiness/demo; test_database_archive.py, test_schema_startup.py, concurrent PostgreSQL startup test |
 | Public exposure / data privacy | synthetic-source SQL scoping, exact Host allowlist, pre-body auth, upload deadline, hashed docs CSP | test_public_demo.py, test_public_security.py; public and private HTTP verification |
+| Investigation / documentation / SQL reasoning | typed authenticated explanation, shared rule classifier, full-group lineage checks, read snapshot | test_explanation.py; PostgreSQL concurrent-writer/read-only-reset test; CLI explanation test |
+| Reproducible evaluation | generated-ID-scoped reconciliation and one-payment explanation timings | test_evaluation.py; evaluate.py outputs assertion-backed samples |
 
 Spark and Kubernetes are deliberately covered by the other portfolio projects; this service uses SQL and ECS where sufficient. See VERIFICATION.md for the exact boundary between executed checks, SDK unit tests and unexecuted cloud integration.

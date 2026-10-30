@@ -1,0 +1,38 @@
+{
+  "recorded_at_utc": "2026-10-30T15:33:55Z",
+  "python": "3.12.0",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "database": "postgresql",
+  "rows": 1000,
+  "payment_ingestion_ms": 158.427,
+  "statement_ingestion_ms": 180.282,
+  "reconciliation": {
+    "n": 30,
+    "p50_ms": 113.188,
+    "p95_ms": 152.209,
+    "p99_ms": 162.219,
+    "mean_ms": 115.05
+  },
+  "replay": {
+    "n": 30,
+    "p50_ms": 41.324,
+    "p95_ms": 71.664,
+    "p99_ms": 77.337,
+    "mean_ms": 47.722
+  },
+  "explanation": {
+    "n": 30,
+    "p50_ms": 21.294,
+    "p95_ms": 31.77,
+    "p99_ms": 33.672,
+    "mean_ms": 22.712
+  },
+  "malformed_batch_detection_ms": 41.363,
+  "restart_replay_ms": 98.036,
+  "correctness": {
+    "matched_rows": 1000,
+    "replay_same_batch": true,
+    "bad_batch_quarantined": true
+  },
+  "methodology": "One local process, cold insert then 30 warm queries/replays/explanations; reconciliation scopes the generated payment IDs before its result cap; explanation targets one payment; no concurrent request load, percentile nearest lower rank. Not a production SLA."
+}

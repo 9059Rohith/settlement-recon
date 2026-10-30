@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from uuid import uuid4
 
 import pytest
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import make_url
 
 from settlement_recon.database_archive import DatabaseArchive
@@ -75,3 +75,39 @@ def test_postgres_concurrent_cold_schema_initialization():
         with admin.begin() as connection:
             connection.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
         admin.dispose()
+
+
+@pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="Set TEST_DATABASE_URL")
+def test_postgres_explanation_pins_snapshot_and_resets_read_only_state(tmp_path):
+    service = Reconciler(os.environ["TEST_DATABASE_URL"], FileArchive(tmp_path / "raw"))
+    identity = "explanation-" + uuid4().hex
+    payment = json.dumps(
+        {"payments": [{"payment_id": identity, "currency": "USD", "amount": "10.00"}]}
+    ).encode()
+    service.ingest("payments", "explanation-test", payment)
+    committed = False
+
+    def write_during_read(_connection, _cursor, sql, _parameters, _context, _many):
+        nonlocal committed
+        if not committed and sql.lstrip().upper().startswith("SELECT") and "FROM payments" in sql:
+            committed = True
+            raw = (
+                "row_id,payment_id,currency,net_amount,fee,settled_at\n"
+                f"{identity},{identity},USD,9.50,0.50,2026-10-30T10:00:00Z\n"
+            ).encode()
+            service.ingest("statement", "explanation-test-bank", raw)
+
+    event.listen(service.engine, "after_cursor_execute", write_during_read)
+    try:
+        evidence = service.explain_payment(identity, "USD")
+    finally:
+        event.remove(service.engine, "after_cursor_execute", write_during_read)
+    assert committed and evidence["status"] == "missing"
+    assert evidence["snapshot"] == "repeatable-read"
+    assert evidence["settlements"]["total_rows"] == 0
+    assert evidence["settlements"]["records"] == []
+    assert service.explain_payment(identity, "USD")["status"] == "matched"
+    with service.engine.connect() as connection:
+        assert connection.exec_driver_sql("SHOW transaction_read_only").scalar() == "off"
+        assert connection.get_isolation_level() == "READ COMMITTED"
+    service.engine.dispose()

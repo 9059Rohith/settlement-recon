@@ -44,4 +44,12 @@ Scrape `/metrics` using a private read token over a trusted network/TLS. Alert o
 
 For database failures: check `/readyz`, task logs, RDS health, security-group paths and DNS resolution from the task subnet. For S3 failures: check task role/prefix permissions and endpoint connectivity. For lock timeouts: inspect long transactions; retry immutable input after fixing the cause. Never log full credentials during diagnosis.
 
-Tasks run in private subnets without public addresses; ECR/Logs/Secrets Manager use interface endpoints and S3 uses a gateway endpoint. Regional endpoint charges apply. The third-party partner connector needs a separately approved outbound proxy/connector; default AWS tasks cannot make arbitrary Internet calls. Public live deployment remains blocked until account-specific inputs exist; local PostgreSQL/Docker verification is recorded separately.
+Tasks in the AWS profile run in private subnets without public addresses; ECR/Logs/Secrets Manager use interface endpoints and S3 uses a gateway endpoint. Regional endpoint charges apply. The third-party partner connector needs a separately approved outbound proxy/connector; default AWS tasks cannot make arbitrary Internet calls. AWS apply remains blocked until account-specific inputs exist. The actual free Vercel/Neon public deployment is described in [the hosted profile](public-deployment.md); local PostgreSQL/Docker verification is recorded separately.
+
+## Investigate a reconciliation exception
+
+Run `settlement-recon explain demo-partial INR --limit 5` against the CLI demo database, or the same command through `docker compose exec api` for PostgreSQL. The HTTP equivalent is `GET /v1/reconciliation/demo-partial/INR/explanation?limit=5` with a writer or reader bearer token.
+
+Read `rule`, exact `totals` and `settlements.total_rows` first. If `truncated=true`, the returned bank legs are a sample, while totals still cover every matching leg. Inspect payment/settlement batch IDs and checksums, then use `verify <batch_id>` or its authenticated HTTP route to re-read raw bytes. Do not treat `archive_integrity_checked=false` as a successful integrity check.
+
+Broken receipt references return503 rather than fabricated lineage. Investigate the protected database and retained raw archive; do not edit accepted inputs or reuse an existing business ID for conflicting values. A missing group returns404 and is distinct from a known payment with no settlement (`status=missing`).

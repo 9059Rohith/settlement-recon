@@ -39,6 +39,7 @@ def main():
         database_url = os.environ.get("BENCHMARK_DATABASE_URL", f"sqlite:///{root / 'bench.db'}")
         service = Reconciler(database_url, FileArchive(root / "raw"))
         prefix = str(time.time_ns())
+        payment_ids = [f"{prefix}-{i}" for i in range(args.rows)]
         body = json.dumps(
             {
                 "payments": [
@@ -56,14 +57,20 @@ def main():
         start = time.perf_counter()
         service.ingest("statement", "benchmark-bank", csv.encode())
         statement_ms = (time.perf_counter() - start) * 1000
-        queries, replays = [], []
+        queries, replays, explanations = [], [], []
         for _ in range(30):
             start = time.perf_counter()
-            rows = service.reconcile()
+            rows = service.reconcile(payment_ids=payment_ids)
             queries.append((time.perf_counter() - start) * 1000)
             start = time.perf_counter()
             assert service.ingest("payments", "benchmark", body)["replayed"]
             replays.append((time.perf_counter() - start) * 1000)
+            start = time.perf_counter()
+            explanation = service.explain_payment(payment_ids[0], "USD")
+            explanations.append((time.perf_counter() - start) * 1000)
+            assert explanation["status"] == "matched"
+            assert explanation["totals"]["net_minor"] == 9900
+            assert explanation["totals"]["fee_minor"] == 100
         assert (
             sum(r["status"] == "matched" and r["payment_id"].startswith(prefix) for r in rows)
             == args.rows
@@ -88,6 +95,7 @@ def main():
             "statement_ingestion_ms": round(statement_ms, 3),
             "reconciliation": summary(queries),
             "replay": summary(replays),
+            "explanation": summary(explanations),
             "malformed_batch_detection_ms": round(detected_ms, 3),
             "restart_replay_ms": round(recovery_ms, 3),
             "correctness": {
@@ -96,7 +104,9 @@ def main():
                 "bad_batch_quarantined": True,
             },
             "methodology": (
-                "One local process, cold insert then 30 warm queries/replays; no network load, "
+                "One local process, cold insert then 30 warm queries/replays/explanations; "
+                "reconciliation scopes the generated payment IDs before its result cap; "
+                "explanation targets one payment; no concurrent request load, "
                 "percentile nearest lower rank. Not a production SLA."
             ),
         }
