@@ -1,13 +1,19 @@
 """Authenticated API. Health is public; business data and metrics require a token."""
 
+import base64
+import hashlib
 import hmac
+import html
+import json
 import logging
 import os
+import re
 import time
 from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
+import anyio
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -16,6 +22,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import URL
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.concurrency import run_in_threadpool
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from settlement_recon.domain import MAX_BYTES, DomainError, FileArchive, Reconciler
 
@@ -23,7 +30,14 @@ logger = logging.getLogger("settlement_recon")
 bearer = HTTPBearer(auto_error=False)
 
 
-def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI:
+def create_app(
+    service: Reconciler,
+    token: str,
+    read_token: str = "",
+    *,
+    public_demo: bool = False,
+    allowed_hosts: list[str] | None = None,
+) -> FastAPI:
     app = FastAPI(
         title="Settlement Recon",
         version="0.1.0",
@@ -32,8 +46,11 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
             "minor units. Upload JSON payments or CSV statements; "
             "inspect quarantine and replay results."
         ),
+        swagger_ui_parameters={"validatorUrl": None},
     )
     app.state.service = service
+    if allowed_hosts:
+        app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
     registry = CollectorRegistry()
     requests = Counter(
         "settlement_recon_http_requests",
@@ -74,6 +91,35 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
         started = time.perf_counter()
         request_id = str(uuid4())
         response = await call_next(request)
+        documentation_assets = {
+            "/docs": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/",
+            "/redoc": "https://cdn.jsdelivr.net/npm/redoc@2/bundles/",
+        }
+        if request.url.path in documentation_assets and response.headers.get(
+            "content-type", ""
+        ).startswith("text/html"):
+            body = b"".join([chunk async for chunk in response.body_iterator])
+            hashes = " ".join(
+                "'sha256-" + base64.b64encode(hashlib.sha256(script).digest()).decode() + "'"
+                for script in re.findall(rb"<script(?:\s[^>]*)?>(.*?)</script>", body, re.S)
+                if script.strip()
+            )
+            response = Response(
+                body,
+                status_code=response.status_code,
+                headers=dict(response.headers),
+                background=response.background,
+            )
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; script-src "
+                + hashes
+                + " "
+                + documentation_assets[request.url.path]
+                + "; "
+                "style-src 'unsafe-inline' " + documentation_assets[request.url.path] + "; "
+                "connect-src 'self'; img-src 'self' data: https://fastapi.tiangolo.com; "
+                "font-src data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+            )
         route = getattr(request.scope.get("route"), "path", "unmatched")
         requests.labels(route, str(response.status_code)).inc()
         duration.labels(route).observe(time.perf_counter() - started)
@@ -82,6 +128,12 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["Cache-Control"] = "no-store"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        if request.url.path not in {"/docs", "/redoc"}:
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
+                "base-uri 'none'; form-action 'none'"
+            )
         # No payloads, URLs, credentials or database strings in operational logs.
         logger.info(
             "request_completed route=%s status=%d request_id=%s",
@@ -114,10 +166,41 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
         <p>Auditable payment ingestion, exact reconciliation and controlled replay.</p>
         <p>Use the interactive API console to upload synthetic JSON and CSV, inspect
         batches, verify archived inputs and query reconciliation exceptions.</p>
-        <p><a href='/docs'>Open API console</a> · <a href='/healthz'>Health</a> ·
+        <p><a href='/demo'>Live synthetic reconciliation</a> ·
+        <a href='/docs'>Open API console</a> · <a href='/healthz'>Health</a> ·
         <a href='/readyz'>Readiness</a></p>
         <p>Business data requires an operator token. This system processes synthetic
         portfolio data and does not initiate or move money.</p></main></body></html>"""
+
+    if public_demo:
+        from settlement_recon.demo import summary
+
+        @app.get("/demo/summary", tags=["Synthetic public demo"])
+        def demo_summary():
+            return summary(service)
+
+        @app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
+        def demo_dashboard():
+            evidence = html.escape(json.dumps(summary(service), indent=2))
+            return f"""<!doctype html><html lang="en"><meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <title>Settlement Recon | Live evidence</title><style>
+            body{{margin:0;background:#0d1525;color:#e5edf9;font:17px system-ui}}
+            main{{max-width:900px;margin:6vh auto;padding:32px}}h1{{font-size:44px}}
+            small,a{{color:#76dfc7}}pre{{background:#17253c;padding:24px;overflow:auto;
+            border:1px solid #375270;border-radius:14px;line-height:1.6}}
+            p{{line-height:1.7;max-width:760px}}</style><main>
+            <small>PAYMENTS / DATA ENGINEERING / SYNTHETIC DATA</small>
+            <h1>Settlement Recon</h1><p>Three payments. Two bank settlements.
+            One matched payment, one partial payment and one missing settlement.
+            This page queries the real reconciliation engine and verifies archived
+            input checksums on each request.</p><pre>{evidence}</pre>
+            <p>The invalid batch was quarantined through the same ingestion API.
+            Repeated startup ingestion is idempotent. Administrative APIs require
+            an operator token.</p><a href="/demo">Refresh from database</a> ·
+            <a href="/demo/summary">Live JSON</a> · <a href="/docs">API documentation</a> ·
+            <a href="https://github.com/9059Rohith/settlement-recon">Source</a>
+            </main></html>"""
 
     @app.get("/healthz")
     def health():
@@ -158,10 +241,14 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
     )
     async def ingest(kind: str, request: Request, source: str):
         chunks = bytearray()
-        async for chunk in request.stream():
-            if len(chunks) + len(chunk) > MAX_BYTES:
-                raise DomainError("Payload exceeds maximum size", "size")
-            chunks.extend(chunk)
+        try:
+            with anyio.fail_after(10):
+                async for chunk in request.stream():
+                    if len(chunks) + len(chunk) > MAX_BYTES:
+                        raise DomainError("Payload exceeds maximum size", "size")
+                    chunks.extend(chunk)
+        except TimeoutError:
+            raise HTTPException(408, "Upload deadline exceeded") from None
         result = await run_in_threadpool(service.ingest, kind, source, bytes(chunks))
         ingestion.labels("replayed" if result["replayed"] else result["status"]).inc()
         return result
@@ -187,13 +274,7 @@ def create_app(service: Reconciler, token: str, read_token: str = "") -> FastAPI
 
 def from_environment() -> FastAPI:
     root = Path(os.environ.get("DATA_DIR", "data"))
-    root.mkdir(parents=True, exist_ok=True)
-    archive = FileArchive(root / "raw")
     bucket = os.environ.get("RAW_BUCKET")
-    if bucket:
-        from settlement_recon.s3 import S3Archive
-
-        archive = S3Archive(bucket, os.environ.get("RAW_KMS_KEY_ARN"))
     database_url = os.environ.get("DATABASE_URL")
     if not database_url and os.environ.get("DB_HOST"):
         database_url = URL.create(
@@ -205,5 +286,36 @@ def from_environment() -> FastAPI:
             database=os.environ["DB_NAME"],
             query={"sslmode": os.environ.get("DB_SSLMODE", "prefer")},
         )
-    service = Reconciler(database_url or f"sqlite:///{root / 'recon.db'}", archive)
-    return create_app(service, os.environ.get("API_TOKEN", ""), os.environ.get("READ_TOKEN", ""))
+    if not database_url:
+        root.mkdir(parents=True, exist_ok=True)
+        database_url = f"sqlite:///{root / 'recon.db'}"
+    if isinstance(database_url, str) and database_url.startswith("postgresql://"):
+        database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    raw_store = os.environ.get("RAW_STORE", "s3" if bucket else "file")
+    if raw_store == "database":
+        from settlement_recon.database_archive import DatabaseArchive
+
+        archive = DatabaseArchive(database_url)
+    elif raw_store == "s3" and bucket:
+        from settlement_recon.s3 import S3Archive
+
+        archive = S3Archive(bucket, os.environ.get("RAW_KMS_KEY_ARN"))
+    elif raw_store == "file":
+        archive = FileArchive(root / "raw")
+    else:
+        raise ValueError("Invalid RAW_STORE configuration")
+    service = Reconciler(database_url, archive)
+    if os.environ.get("SEED_DEMO", "false").lower() == "true":
+        from settlement_recon.demo import seed_demo
+
+        seed_demo(service)
+    return create_app(
+        service,
+        os.environ.get("API_TOKEN", ""),
+        os.environ.get("READ_TOKEN", ""),
+        public_demo=os.environ.get("PUBLIC_DEMO", "false").lower() == "true",
+        allowed_hosts=[
+            h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()
+        ]
+        or None,
+    )

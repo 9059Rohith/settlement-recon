@@ -32,6 +32,8 @@ from sqlalchemy import (
     union_all,
 )
 
+from settlement_recon.schema import initialize_schema
+
 SCALES = {"USD": 2, "EUR": 2, "GBP": 2, "INR": 2, "JPY": 0}
 MAX_BYTES = 2_000_000
 MAX_ROWS = 10_000
@@ -206,7 +208,7 @@ class Reconciler:
             if str(database_url).startswith("sqlite")
             else {"connect_timeout": 5},
         )
-        metadata.create_all(self.engine)
+        initialize_schema(self.engine, metadata)
 
     @contextmanager
     def transaction(self):
@@ -345,18 +347,24 @@ class Reconciler:
             raise DomainError("Batch not found", "not_found")
         return hashlib.sha256(self.archive.read(checksum)).hexdigest() == checksum
 
-    def reconcile(self, limit=10000) -> list[dict]:
+    def reconcile(self, limit=10000, *, payment_ids=None, source=None) -> list[dict]:
         # A single UNION statement gives expected + orphan groups one database snapshot.
-        aggregate = (
-            select(
-                settlements.c.payment_id,
-                settlements.c.currency,
-                func.sum(settlements.c.net_minor + settlements.c.fee_minor).label("settled_minor"),
-                func.count().label("settlement_rows"),
-            )
-            .group_by(settlements.c.payment_id, settlements.c.currency)
-            .subquery()
+        settlement_query = select(
+            settlements.c.payment_id,
+            settlements.c.currency,
+            func.sum(settlements.c.net_minor + settlements.c.fee_minor).label("settled_minor"),
+            func.count().label("settlement_rows"),
         )
+        if payment_ids is not None:
+            payment_ids = [identifier(value) for value in payment_ids]
+            settlement_query = settlement_query.where(settlements.c.payment_id.in_(payment_ids))
+        if source is not None:
+            identifier(source)
+            source_batches = select(batches.c.id).where(batches.c.source == source)
+            settlement_query = settlement_query.where(settlements.c.batch_id.in_(source_batches))
+        aggregate = settlement_query.group_by(
+            settlements.c.payment_id, settlements.c.currency
+        ).subquery()
         join = (payment_table.c.payment_id == aggregate.c.payment_id) & (
             payment_table.c.currency == aggregate.c.currency
         )
@@ -380,6 +388,11 @@ class Reconciler:
             .select_from(aggregate.outerjoin(payment_table, join))
             .where(payment_table.c.payment_id.is_(None))
         )
+        if payment_ids is not None:
+            expected = expected.where(payment_table.c.payment_id.in_(payment_ids))
+            orphan = orphan.where(aggregate.c.payment_id.in_(payment_ids))
+        if source is not None:
+            expected = expected.where(payment_table.c.batch_id.in_(source_batches))
         combined = union_all(expected, orphan).subquery()
         query = select(combined).order_by(combined.c.payment_id, combined.c.currency).limit(limit)
         with self.engine.connect() as connection:

@@ -2,6 +2,15 @@
 
 Use only synthetic data in the public demonstration. This service is not certified for PCI DSS or regulated payment processing.
 
+The [actual public deployment](docs/public-deployment.md) uses a minimal,
+digest-pinned Python3.15.1 image and isolated Neon PostgreSQL with verified TLS.
+Its latest all-severity image scan reports zero vulnerabilities and zero secrets;
+the earlier Debian cached scan in historical evidence is superseded. Public demo
+aggregation is restricted to its known synthetic source and IDs. Raw records and
+administrative operations remain protected. The new database archive preserves
+and verifies raw input across ephemeral-container restarts. Concurrent schema
+bootstrap is serialized; authenticated uploads have a bounded read deadline.
+
 - Business APIs and metrics require constant-time bearer-token comparison. Write and optional read tokens have separate privileges. Missing/short writer credentials disable all protected operations. Rotate by updating the secret and restarting containers/tasks. TLS is required outside loopback.
 - Inputs have byte/row bounds, strict schemas, safe identifier syntax, decimal precision and timezone validation. SQLAlchemy binds values; source identifiers cannot become file paths or SQL fragments.
 - The operator-only partner connector requires explicit allowed hosts, HTTPS (except named loopback for the local simulator), no userinfo/redirects, bounded responses/timeouts and three transient retries. Operators must use trusted DNS and outbound network controls; hostname allowlisting alone is not a complete DNS-rebinding defence.

@@ -1,0 +1,11 @@
+# Build the release image first: docker build -t settlement-recon:public .
+FROM cgr.dev/chainguard/python:latest-dev@sha256:95d8cc85fad8acc8ebad357e1972f2a975c498a65406cd9b00bb2233371a94a2 AS testdeps
+USER 0
+COPY requirements-test.txt /requirements-test.txt
+RUN python -m pip install --only-binary=:all: --target /testdeps -r /requirements-test.txt
+FROM settlement-recon:public
+COPY --from=testdeps /testdeps /testdeps
+ENV PYTHONPATH=/testdeps:/work/src
+WORKDIR /work
+ENTRYPOINT []
+CMD ["python", "-m", "pytest", "tests", "-q", "-o", "cache_dir=/tmp/pytest-cache"]

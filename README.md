@@ -1,5 +1,12 @@
 # Settlement Recon
 
+**Public live application:** [Reconciliation dashboard](https://rohith-settlement-recon.vercel.app/demo)
+· [API docs](https://rohith-settlement-recon.vercel.app/docs)
+· [Live JSON](https://rohith-settlement-recon.vercel.app/demo/summary)
+· [Readiness](https://rohith-settlement-recon.vercel.app/readyz).
+Runs the actual Docker backend on Vercel Hobby with durable, isolated Neon
+PostgreSQL. [Deployment, security and free-tier limits](docs/public-deployment.md).
+
 [![CI](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml/badge.svg)](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml)
 
 Hosted CI is currently blocked by an account-level runner restriction. [Executed local verification](VERIFICATION.md) is recorded separately; no hosted pass is claimed.

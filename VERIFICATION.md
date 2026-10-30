@@ -1,5 +1,30 @@
 # Executed verification — 2026-10-30
 
+## Public-host hardening and deployment update
+
+- The actual Docker backend is publicly reachable on
+  [the live synthetic dashboard](https://rohith-settlement-recon.vercel.app/demo),
+  with durable Neon PostgreSQL. This supersedes the earlier absence of a public
+  endpoint; AWS remains undeployed.
+- **75 tests passed** inside the minimal Python3.15.1 runtime against real
+  PostgreSQL and encrypted S3-compatible MinIO, including concurrent empty-schema
+  startup, content-addressed database archival, restart, synthetic-source isolation,
+  pre-body authorization and slow-upload deadline regressions.
+- Fresh Trivy vulnerability + secret scan reports **zero vulnerabilities at all
+  severities and zero secrets**, using the database updated2026-10-30 13:06UTC.
+  No severity filter, ignore-unfixed flag or vulnerability suppression was used.
+  `evidence/public-image-scan.json` retains the actual image identity.
+- Ruff passes. Bandit's medium/high gate passes; the intentional container
+  listener has one explicit B104 annotation. The optional disabled read-token
+  default is a low-severity B107 false positive, not an embedded credential.
+- A dedicated non-superuser database role, verified TLS/CA/hostname/channel binding,
+  revoked public database access and negative cross-project connection tests were
+  applied to the hosted deployment. Public output is synthetic-only; operational
+  APIs still require authentication.
+
+Earlier measurements below are dated local evidence, not public-cloud latency
+claims. Free-host request measurements are recorded separately.
+
 This is an original, locally verified engineering portfolio system using synthetic data. AWS deployment and remote CI success are separate claims and are not inferred from configuration files.
 
 | Check | Actual result / evidence |
@@ -28,7 +53,7 @@ This is an original, locally verified engineering portfolio system using synthet
 
 ## External blockers and remaining limits
 
-- No matching AWS credentials, deployment role, token-secret ARN, issued ACM certificate/DNS or Terraform backend were available. **No AWS apply or public live endpoint is claimed.**
+- No matching AWS credentials, deployment role, token-secret ARN, issued ACM certificate/DNS or Terraform backend were available. **No AWS apply is claimed.** The free public alternative is documented above.
 - GitHub workflows can be published using the signed-in account; an account-level runner restriction prevents remote Actions jobs from starting. Local tests are the executed verification evidence.
 - No live Airflow scheduler or AWS ECS rollback drill is claimed. Actual older-runtime DAG import is verified above. A pinned current Airflow DAG-import CI job is included; blocked runners do not count as an executed job.
 - This implementation has shared operator tokens, serialized writers, a bounded reconciliation response and initial owner-role schema creation. It does not establish regulated-production readiness, complete accounting coverage, perfect security or unlimited scalability.

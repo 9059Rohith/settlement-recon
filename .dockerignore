@@ -8,3 +8,7 @@ data
 evidence
 infra/.terraform
 *.db
+.vercel
+.ruff_cache
+tests
+docs

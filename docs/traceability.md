@@ -12,5 +12,7 @@
 | CI/CD / Git / automation | CI gates, OIDC immutable-image deploy and rollback | GitHub workflow runs; AWS release workflow unrun without role/infrastructure |
 | Prometheus / Grafana | authenticated exporter, alert rules, dashboard JSON | HTTP exporter tested; independent monitoring-server rollout is optional |
 | Documentation / developer productivity | operator CLI, ADRs, recovery and release guide | CLI tests and documented reproduction commands |
+| Actual public deployment / durable recovery | Vercel Docker + isolated Neon PostgreSQL; database raw archive; serialized cold-start DDL | live HTTPS readiness/demo; test_database_archive.py, test_schema_startup.py, concurrent PostgreSQL startup test |
+| Public exposure / data privacy | synthetic-source SQL scoping, exact Host allowlist, pre-body auth, upload deadline, hashed docs CSP | test_public_demo.py, test_public_security.py; public and private HTTP verification |
 
 Spark and Kubernetes are deliberately covered by the other portfolio projects; this service uses SQL and ECS where sufficient. See VERIFICATION.md for the exact boundary between executed checks, SDK unit tests and unexecuted cloud integration.

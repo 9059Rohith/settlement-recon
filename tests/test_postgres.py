@@ -4,7 +4,10 @@ from concurrent.futures import ThreadPoolExecutor
 from uuid import uuid4
 
 import pytest
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
 
+from settlement_recon.database_archive import DatabaseArchive
 from settlement_recon.domain import FileArchive, Reconciler
 
 
@@ -32,3 +35,43 @@ def test_postgres_concurrency_and_exact_reconciliation(tmp_path):
     assert rows[0]["status"] == "matched"
     assert rows[0]["settled_minor"] == 10001
     service.engine.dispose()
+
+
+@pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="Set TEST_DATABASE_URL")
+def test_postgres_raw_archive_concurrent_writes_and_restart():
+    archive = DatabaseArchive(os.environ["TEST_DATABASE_URL"])
+    raw = ("synthetic-archive-" + uuid4().hex).encode()
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        checksums = list(pool.map(lambda _: archive.put(raw), range(8)))
+    assert len(set(checksums)) == 1
+    recreated = DatabaseArchive(os.environ["TEST_DATABASE_URL"])
+    assert recreated.read(checksums[0]) == raw
+    recreated.ready()
+    archive.engine.dispose()
+    recreated.engine.dispose()
+
+
+@pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="Set TEST_DATABASE_URL")
+def test_postgres_concurrent_cold_schema_initialization():
+    schema = "cold_start_" + uuid4().hex
+    database_url = os.environ["TEST_DATABASE_URL"]
+    admin = create_engine(database_url)
+    with admin.begin() as connection:
+        connection.execute(text(f'CREATE SCHEMA "{schema}"'))
+    scoped = make_url(database_url).update_query_dict({"options": f"-csearch_path={schema}"})
+
+    def start(_index):
+        archive = DatabaseArchive(scoped)
+        service = Reconciler(scoped, archive)
+        archive.ready()
+        assert service.batches() == []
+        service.engine.dispose()
+        archive.engine.dispose()
+
+    try:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            list(pool.map(start, range(8)))
+    finally:
+        with admin.begin() as connection:
+            connection.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+        admin.dispose()
