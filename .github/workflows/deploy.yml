@@ -1,0 +1,36 @@
+name: Deploy AWS
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency: {group: aws-production, cancel-in-progress: false}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_REGION: ap-south-1
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+      ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+      PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require configured infrastructure
+        run: test -n "$ECR_REPOSITORY" && test -n "$ECS_CLUSTER" && test -n "$ECS_SERVICE" && test -n "$PUBLIC_URL"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ap-south-1
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+      - name: Build and push immutable image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+        run: |
+          docker build -t "$REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA" .
+          docker push "$REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA"
+          printf 'IMAGE=%s/%s:%s\n' "$REGISTRY" "$ECR_REPOSITORY" "$GITHUB_SHA" >> "$GITHUB_ENV"
+      - name: Release and verify
+        run: python scripts/deploy.py

@@ -1,0 +1,47 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: recon
+          POSTGRES_USER: recon
+          POSTGRES_PASSWORD: ci-only-ephemeral-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U recon -d recon"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://recon:ci-only-ephemeral-password@127.0.0.1:5432/recon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements-dev.txt
+      - run: pip install --no-deps -e .
+      - run: ruff check . && ruff format --check .
+      - run: pytest --cov=settlement_recon --cov-report=term-missing
+      - run: bandit -r src -ll
+      - run: pip-audit -r requirements.txt
+      - uses: hashicorp/setup-terraform@v3
+        with: {terraform_version: "1.13.5"}
+      - run: terraform -chdir=infra fmt -check && terraform -chdir=infra init -backend=false && terraform -chdir=infra validate
+      - run: docker build -t settlement-recon:ci .
+      - run: python scripts/evaluate.py --rows 1000
+      - uses: actions/upload-artifact@v4
+        with:
+          name: measured-benchmark
+          path: evidence/benchmark.json
+  airflow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: >-
+          docker run --rm --entrypoint python -v "$PWD/dags:/dags:ro"
+          apache/airflow:3.3.2-python3.12
+          -c "from airflow.models import DagBag; b=DagBag('/dags',include_examples=False); assert not b.import_errors,b.import_errors; assert 'reconciliation' in b.dags"
