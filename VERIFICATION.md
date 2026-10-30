@@ -1,19 +1,48 @@
 # Executed verification â€” 2026-10-30
 
+## Reconciliation explanation revision
+
+The authenticated explanation endpoint and CLI return exact matching rules, full-group
+net/fee totals and bounded source receipts from one read snapshot. PostgreSQL uses
+read-only REPEATABLE READ with a ten-second statement timeout; SQLite explicitly
+opens a read transaction. Tests commit a new settlement through a separate connection
+during the read and prove that totals and evidence stay on the earlier snapshot.
+Missing or invalid lineage outside the returned page also fails closed. Referenced
+checksums do not imply a raw archive read: `archive_integrity_checked` is false.
+
+The current minimal Python3.15.1 runtime ran **96 tests, no skips**, against real
+PostgreSQL17.9 and encrypted MinIO. Ruff and Bandit's medium/high gate passed.
+Current all-severity image vulnerability and secret scans found zero findings;
+the low-severity disabled-token static warning described below remains documented.
+The CLI quickstart and 32 local documentation links were checked. OpenAPI has a
+typed explanation response. Evidence: `tests/test_explanation.py`,
+`tests/test_postgres.py`, `evidence/public-runtime-tests.txt`,
+`evidence/review-image-scan.json`.
+
+The updated benchmark scopes generated IDs before the reconciliation result cap.
+A regression preloads more than 10,000 unrelated rows and verifies that an isolated
+benchmark still measures its own payments. The new PostgreSQL run inserts1,000
+payments and1,000 bank rows and measures30 warm reads per operation:
+reconciliation p50/p95/p99 **113.188/152.209/162.219ms**, replay
+**41.324/71.664/77.337ms**, explanation **21.294/31.770/33.672ms**.
+This is one local Python3.12.0 run over Windows-to-Docker TCP on a shared machine;
+it is neither a cloud latency measurement nor evidence of a general speedup.
+Full method: `evidence/benchmark-explanation-postgres.json`.
+
 ## Public-host hardening and deployment update
 
 - The actual Docker backend is publicly reachable on
   [the live synthetic dashboard](https://rohith-settlement-recon.vercel.app/demo),
   with durable Neon PostgreSQL. This supersedes the earlier absence of a public
   endpoint; AWS remains undeployed.
-- **75 tests passed** inside the minimal Python3.15.1 runtime against real
+- **96 tests passed** (26.17 s) inside the minimal Python3.15.1 runtime against real
   PostgreSQL and encrypted S3-compatible MinIO, including concurrent empty-schema
   startup, content-addressed database archival, restart, synthetic-source isolation,
   pre-body authorization and slow-upload deadline regressions.
 - Fresh Trivy vulnerability + secret scan reports **zero vulnerabilities at all
   severities and zero secrets**, using the database updated2026-10-30 13:06UTC.
   No severity filter, ignore-unfixed flag or vulnerability suppression was used.
-  `evidence/public-image-scan.json` retains the actual image identity.
+  `evidence/review-image-scan.json` retains the current explanation image identity.
 - Ruff passes. Bandit's medium/high gate passes; the intentional container
   listener has one explicit B104 annotation. The optional disabled read-token
   default is a low-severity B107 false positive, not an embedded credential.
@@ -22,7 +51,7 @@
   applied to the hosted deployment. Public output is synthetic-only; operational
   APIs still require authentication.
 
-The final public rollout preserved an archive receipt from the previous deployment. Swagger Try it out executed the synthetic summary under the hardened CSP and returned200. Actual screenshots and public response evidence are retained in vidence/public-dashboard.jpg and vidence/public-release-verification.json.
+The final public rollout preserved an archive receipt from the previous deployment. Swagger Try it out executed the synthetic summary under the hardened CSP and returned200. Actual screenshots and public response evidence are retained in `evidence/public-dashboard.jpg` and `evidence/public-release-verification.json`.
 
 Earlier measurements below are dated local evidence, not public-cloud latency
 claims. Free-host request measurements are recorded separately.
