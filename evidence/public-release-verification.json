@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-10-30T15:00:20.217869+00:00",
+  "verified_at": "2026-10-30T15:37:36.913265+00:00",
   "base": "https://rohith-settlement-recon.vercel.app",
   "checks": {
     "/healthz": 200,
@@ -26,17 +26,14 @@
   "request_measurement": {
     "samples": 12,
     "method": "nearest rank; sequential warm public HTTPS requests from India; not a load test",
-    "p50_ms": 1027.758,
-    "p95_ms": 1459.316,
-    "p99_ms": 1459.316
+    "p50_ms": 1037.361,
+    "p95_ms": 1374.069,
+    "p99_ms": 1374.069
   },
   "security": {
     "database_identity_verified_tls": true,
     "database_role": "isolated non-superuser",
     "cross_project_connect_denied": true,
     "administrative_token_public": false
-  },
-  "replacement_deployment": "dpl_AT2XL7WpQBme1Jy72TMTGKEKwBQN",
-  "public_browser_documentation_try_it_out_status": 200,
-  "public_browser_documentation_csp_bootstrap_passed": true
+  }
 }

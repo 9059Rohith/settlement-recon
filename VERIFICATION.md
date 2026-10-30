@@ -1,4 +1,4 @@
-# Executed verification â€” 2026-10-30
+# Executed verification — 2026-10-30
 
 ## Reconciliation explanation revision
 
@@ -10,8 +10,8 @@ during the read and prove that totals and evidence stay on the earlier snapshot.
 Missing or invalid lineage outside the returned page also fails closed. Referenced
 checksums do not imply a raw archive read: `archive_integrity_checked` is false.
 
-The current minimal Python3.15.1 runtime ran **96 tests, no skips**, against real
-PostgreSQL17.9 and encrypted MinIO. Ruff and Bandit's medium/high gate passed.
+The current minimal Python 3.15.1 runtime ran **96 tests, no skips**, against real
+PostgreSQL 17.9 and encrypted MinIO. Ruff and Bandit's medium/high gate passed.
 Current all-severity image vulnerability and secret scans found zero findings;
 the low-severity disabled-token static warning described below remains documented.
 The CLI quickstart and 32 local documentation links were checked. OpenAPI has a
@@ -21,11 +21,11 @@ typed explanation response. Evidence: `tests/test_explanation.py`,
 
 The updated benchmark scopes generated IDs before the reconciliation result cap.
 A regression preloads more than 10,000 unrelated rows and verifies that an isolated
-benchmark still measures its own payments. The new PostgreSQL run inserts1,000
-payments and1,000 bank rows and measures30 warm reads per operation:
+benchmark still measures its own payments. The new PostgreSQL run inserts 1,000
+payments and 1,000 bank rows and measures 30 warm reads per operation:
 reconciliation p50/p95/p99 **113.188/152.209/162.219ms**, replay
 **41.324/71.664/77.337ms**, explanation **21.294/31.770/33.672ms**.
-This is one local Python3.12.0 run over Windows-to-Docker TCP on a shared machine;
+This is one local Python 3.12.0 run over Windows-to-Docker TCP on a shared machine;
 it is neither a cloud latency measurement nor evidence of a general speedup.
 Full method: `evidence/benchmark-explanation-postgres.json`.
 
@@ -35,7 +35,7 @@ Full method: `evidence/benchmark-explanation-postgres.json`.
   [the live synthetic dashboard](https://rohith-settlement-recon.vercel.app/demo),
   with durable Neon PostgreSQL. This supersedes the earlier absence of a public
   endpoint; AWS remains undeployed.
-- **96 tests passed** (26.17 s) inside the minimal Python3.15.1 runtime against real
+- **96 tests passed** (26.17 s) inside the minimal Python 3.15.1 runtime against real
   PostgreSQL and encrypted S3-compatible MinIO, including concurrent empty-schema
   startup, content-addressed database archival, restart, synthetic-source isolation,
   pre-body authorization and slow-upload deadline regressions.

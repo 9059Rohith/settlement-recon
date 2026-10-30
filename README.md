@@ -165,7 +165,7 @@ The built-in `demo` performs accepted, partial, quarantined and replayed cases. 
 | Does explanation remain consistent when another connection commits a settlement? | [SQLite and PostgreSQL snapshot tests](tests/test_explanation.py), [PostgreSQL test](tests/test_postgres.py) |
 | Can a hidden bank leg have missing provenance? | [Full-group lineage regression](tests/test_explanation.py) |
 | Did public authentication and replacement recovery work? | [Public checks](evidence/public-release-verification.json), [deployment identity](evidence/public-deployment.json) |
-| Were image vulnerabilities and committed secrets checked? | [Current image scan](evidence/review-image-scan.json), [source secret scan](evidence/public-source-secret-scan.json) |
+| Were image vulnerabilities and committed secrets checked? | [Current image scan](evidence/review-image-scan.json), [source secret scan](evidence/review-source-secret-scan.json) |
 | What is configured versus actually executed? | [Verification ledger](VERIFICATION.md) |
 
 The current 1,000-payment PostgreSQL run used Python 3.12.0 on Windows-to-Docker TCP, 30 warm samples per operation, exact correctness assertions and no concurrent request load:
@@ -191,7 +191,7 @@ python -m pip_audit -r requirements.txt
 python scripts/evaluate.py --rows 1000
 ```
 
-Set `TEST_DATABASE_URL` and the S3-compatible test credentials to execute those integrations; their absence produces explicit skips. [Native runtime verification instructions](docs/public-deployment.md#verify-the-actual-runtime) cover the pinned Python 3.15 image. The genuine [GitHub Actions badge](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml) is subject to an account-level runner restriction; executed local/container evidence is linked above.
+Set `TEST_DATABASE_URL` and the S3-compatible test credentials to execute those integrations; their absence produces explicit skips. [Native runtime verification instructions](docs/public-deployment.md#verify-the-actual-runtime) cover the pinned Python 3.15 image. The configured [GitHub Actions workflow](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml) is subject to an account-level runner restriction; executed local/container evidence is linked above.
 
 ## Deployment scope and tradeoffs
 
@@ -220,3 +220,5 @@ Companion projects explore the adjacent problems: [FluxLake](https://github.com/
 Original implementation informed by [PostgreSQL snapshot isolation](https://www.postgresql.org/docs/current/transaction-iso.html), [Airflow rerun guidance](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html), [AWS ELT patterns](https://github.com/aws-samples/sample-mwaa-elt-ingestion-glue-rds) and [S3 conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html). References are design inputs, not repositories claimed as original work.
 
 [MIT license](LICENSE).
+
+The new explanation route also passed [protected public HTTPS checks](evidence/review-public-feature.json), including exact partial totals, valid source receipts, denied anonymous access, bounded input and its typed OpenAPI response.

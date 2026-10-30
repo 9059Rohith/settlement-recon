@@ -1,0 +1,15 @@
+{
+  "verified_at_utc": "2026-10-30T15:37:05.949171+00:00",
+  "public_url": "https://rohith-settlement-recon.vercel.app",
+  "scope": "Actual protected feature calls through the public production hostname; credentials excluded",
+  "checks": {
+    "anonymous_denied": true,
+    "partial_difference_minor": 5000,
+    "snapshot": "repeatable-read",
+    "valid_source_receipts": true,
+    "archive_read_claimed": false,
+    "excess_limit_422": true,
+    "unknown_group_404": true,
+    "typed_openapi_response": true
+  }
+}

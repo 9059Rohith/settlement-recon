@@ -32,39 +32,43 @@
 
 Files: `src/settlement_recon/domain.py`, `src/settlement_recon/api.py`, new focused explanation module/tests if appropriate, `README.md`, architecture/interview/traceability docs.
 
-- [ ] Read current SQL and archive contracts; settle a bounded single-payment/currency explanation interface.
-- [ ] Write failing tests for partial/matched/missing/orphan outcomes, batch/checksum lineage, currency isolation, unknown IDs and authorization.
-- [ ] Implement evidence from a consistent SQL snapshot without duplicating matching rules or allowing unbounded settlement expansion.
-- [ ] Run focused and full tests, Ruff, security checks and actual PostgreSQL/container verification.
-- [ ] Rewrite README with problem, live links, five distinguishing engineering points, architecture, quickstart, failure walkthrough, measurements, tradeoffs and reviewer path.
+- [x] Read current SQL and archive contracts; settle a bounded single-payment/currency explanation interface.
+- [x] Write failing tests for partial/matched/missing/orphan outcomes, batch/checksum lineage, currency isolation, unknown IDs and authorization.
+- [x] Implement evidence from a consistent SQL snapshot without duplicating matching rules or allowing unbounded settlement expansion.
+- [x] Run focused and full tests, Ruff, security checks and actual PostgreSQL/container verification.
+- [x] Rewrite README with problem, live links, five distinguishing engineering points, architecture, quickstart, failure walkthrough, measurements, tradeoffs and reviewer path.
 
 ### 2. FluxLake: protected correctness inspection
 
 Owner: dedicated agent; existing `fluxlake/` only.
 
-- [ ] Inspect the projection/source snapshot interfaces and plan a bounded source-to-projection audit with explicit consistency semantics.
-- [ ] Write failing correctness/negative/authentication tests; implement and run relevant PostgreSQL/native-runtime checks.
-- [ ] Rewrite README around actual CDC semantics, recovery, deployed request synchronization, measured evidence and an executable reviewer walkthrough.
+- [x] Inspect the projection/source snapshot interfaces and plan a bounded source-to-projection audit with explicit consistency semantics.
+- [x] Write failing correctness/negative/authentication tests; implement and run relevant PostgreSQL/native-runtime checks.
+- [x] Rewrite README around actual CDC semantics, recovery, deployed request synchronization, measured evidence and an executable reviewer walkthrough.
 
 ### 3. DataGuard: published-version comparison
 
 Owner: dedicated agent; existing `dataguard/` only.
 
-- [ ] Inspect immutable publication storage; plan an authenticated, bounded comparison of two published versions with provenance.
-- [ ] Write failing change/correctness/negative/authentication tests; implement and verify against the real storage backend.
-- [ ] Rewrite README around publication invariants, actual failure recovery, contracts, evidence, deployment and a reproducible reviewer walkthrough.
+- [x] Inspect immutable publication storage; plan an authenticated, bounded comparison of two published versions with provenance.
+- [x] Write failing change/correctness/negative/authentication tests; implement and verify against the real storage backend.
+- [x] Rewrite README around publication invariants, actual failure recovery, contracts, evidence, deployment and a reproducible reviewer walkthrough.
 
 ### 4. PipeFoundry: safe deployment change preview
 
 Owner: dedicated agent; existing `pipefoundry/` only.
 
-- [ ] Inspect config/revision/lease interfaces; plan an authenticated preview of create/update/no-op with structured changes and no workload execution.
-- [ ] Write failing no-side-effect/diff/validation/privacy tests; implement and verify real PostgreSQL persistence compatibility.
-- [ ] Rewrite README around developer workflow, immutable revisions, backfill/rollback, security, measurements and deploy boundaries.
+- [x] Inspect config/revision/lease interfaces; plan an authenticated preview of create/update/no-op with structured changes and no workload execution.
+- [x] Write failing no-side-effect/diff/validation/privacy tests; implement and verify real PostgreSQL persistence compatibility.
+- [x] Rewrite README around developer workflow, immutable revisions, backfill/rollback, security, measurements and deploy boundaries.
 
 ### 5. Integrate, release and publish
 
-- [ ] Review diffs and documentation claims; verify relative links, referenced commands and evidence.
-- [ ] Build and scan changed runtime images; deploy all changed backends to their existing free projects.
-- [ ] Exercise new authenticated capabilities over actual HTTPS and recheck public summaries/health/privacy/restart invariants.
-- [ ] Commit and push each finished repository; verify published heads and live links match the delivered work.
+- [x] Review diffs and documentation claims; verify relative links, referenced commands and evidence.
+- [x] Build and scan changed runtime images; deploy all changed backends to their existing free projects.
+- [x] Exercise new authenticated capabilities over actual HTTPS and recheck public summaries/health/privacy/restart invariants.
+- [x] Commit and push each finished repository; verify published heads and live links match the delivered work.
+
+## Executed outcome
+
+All four capabilities passed actual authenticated requests through the public production aliases; anonymous access was denied. Runtime suites: Settlement Recon96, FluxLake68, DataGuard72, PipeFoundry56 passing tests (PipeFoundry has three documented optional-integration skips). Fresh runtime scans found zero known vulnerabilities at all severities and zero detected secrets. Tracked-source exports also scanned clean. The four README rewrites link code, reproducible walkthroughs, measured samples, incident behavior and deployment boundaries. GitHub Actions remains subject to an account-level runner restriction; no remote CI success or AWS apply is claimed. Per-repository evidence records source revisions and real hosted release identities.
