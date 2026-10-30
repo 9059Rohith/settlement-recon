@@ -1,4 +1,4 @@
-# Executed verification — 2026-10-30
+# Executed verification â€” 2026-10-30
 
 ## Public-host hardening and deployment update
 
@@ -21,6 +21,8 @@
   revoked public database access and negative cross-project connection tests were
   applied to the hosted deployment. Public output is synthetic-only; operational
   APIs still require authentication.
+
+The final public rollout preserved an archive receipt from the previous deployment. Swagger Try it out executed the synthetic summary under the hardened CSP and returned200. Actual screenshots and public response evidence are retained in vidence/public-dashboard.jpg and vidence/public-release-verification.json.
 
 Earlier measurements below are dated local evidence, not public-cloud latency
 claims. Free-host request measurements are recorded separately.

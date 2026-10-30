@@ -92,3 +92,10 @@ AWS configuration provisions VPC/subnets, private encrypted RDS, a private versi
 ## Design references
 
 Original implementation informed by [Airflow rerun guidance](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html), [AWS event-driven ELT patterns](https://github.com/aws-samples/sample-mwaa-elt-ingestion-glue-rds), and [S3 conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html). No reference repository is presented as the author's own work. MIT licensed.
+
+
+## Public deployment evidence
+
+![Verified public dashboard](evidence/public-dashboard.jpg)
+
+Captured from the actual public HTTPS deployment. [Executed public checks](evidence/public-release-verification.json) record real backend responses, authentication results and a small warm-request sample.
