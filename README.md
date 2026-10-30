@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml/badge.svg)](https://github.com/9059Rohith/settlement-recon/actions/workflows/ci.yml)
 
+Hosted CI is currently blocked by an account-level runner restriction. [Executed local verification](VERIFICATION.md) is recorded separately; no hosted pass is claimed.
+
 An auditable reconciliation service for **synthetic** cross-border payment and bank-settlement data. It ingests JSON and CSV, archives original inputs, applies exact monetary rules, identifies exceptions and safely replays failed inputs. It does not connect to a bank or move money.
 
 ## What works
