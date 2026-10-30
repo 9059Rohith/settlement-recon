@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-10-30T15:37:36.913265+00:00",
+  "verified_at": "2026-10-30T16:08:15.678548+00:00",
   "base": "https://rohith-settlement-recon.vercel.app",
   "checks": {
     "/healthz": 200,
@@ -26,9 +26,9 @@
   "request_measurement": {
     "samples": 12,
     "method": "nearest rank; sequential warm public HTTPS requests from India; not a load test",
-    "p50_ms": 1037.361,
-    "p95_ms": 1374.069,
-    "p99_ms": 1374.069
+    "p50_ms": 1043.25,
+    "p95_ms": 1373.239,
+    "p99_ms": 1373.239
   },
   "security": {
     "database_identity_verified_tls": true,

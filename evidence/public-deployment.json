@@ -1,13 +1,13 @@
 {
-  "verified_at": "2026-10-30T15:38:42.910835+00:00",
+  "verified_at": "2026-10-30T16:09:57.744752+00:00",
   "provider": "Vercel",
   "plan": "Hobby",
   "runtime": "OCI Container (Beta)",
   "durable_database": "isolated Neon Free PostgreSQL",
   "public_url": "https://rohith-settlement-recon.vercel.app",
-  "deployment_id": "dpl_97oqq4DnX9k3mKyLRvK7x4SJbbHB",
+  "deployment_id": "dpl_CiuhFr7K3jv8mCvumrEVkYU3zdEK",
   "provider_state": "READY",
-  "deployed_commit": "65d84919f17f9a04e8057cf32f3c05740af3be0a",
+  "deployed_commit": "270f3409fe01bbaa06a8bfca2b4692c9407ab697",
   "source_repo": "https://github.com/9059Rohith/settlement-recon",
   "scope": "Synthetic portfolio workloads; protected administrative APIs; free usage and cold-start limits apply"
 }

@@ -1,5 +1,5 @@
 {
-  "commit": "65d84919f17f9a04e8057cf32f3c05740af3be0a",
+  "commit": "270f3409fe01bbaa06a8bfca2b4692c9407ab697",
   "scanner": "Trivy0.76.0",
   "input": "git archive HEAD; tracked files only",
   "secret_findings": 0,

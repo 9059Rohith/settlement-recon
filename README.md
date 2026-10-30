@@ -192,7 +192,7 @@ The built-in `demo` performs accepted, partial, quarantined and replayed cases. 
 | Does explanation remain consistent when another connection commits a settlement? | [SQLite and PostgreSQL snapshot tests](tests/test_explanation.py), [PostgreSQL test](tests/test_postgres.py) |
 | Can a hidden bank leg have missing provenance? | [Full-group lineage regression](tests/test_explanation.py) |
 | Did public authentication and replacement recovery work? | [Public checks](evidence/public-release-verification.json), [deployment identity](evidence/public-deployment.json) |
-| Were image vulnerabilities and committed secrets checked? | [Current image scan](evidence/review-image-scan.json), [source secret scan](evidence/review-source-secret-scan.json) |
+| Were image vulnerabilities and committed secrets checked? | [Current image scan](evidence/signature-image-scan.json), [source secret scan](evidence/review-source-secret-scan.json) |
 | What is configured versus actually executed? | [Verification ledger](VERIFICATION.md) |
 
 The current 1,000-payment PostgreSQL run used Python 3.12.0 on Windows-to-Docker TCP, 30 warm samples per operation, exact correctness assertions and no concurrent request load:
@@ -249,3 +249,5 @@ Original implementation informed by [PostgreSQL snapshot isolation](https://www.
 [MIT license](LICENSE).
 
 The new explanation route also passed [protected public HTTPS checks](evidence/review-public-feature.json), including exact partial totals, valid source receipts, denied anonymous access, bounded input and its typed OpenAPI response.
+
+Current signature release: [actual protected HTTPS checks](evidence/signature-public-feature.json), [all-severity runtime scan](evidence/signature-image-scan.json), and [measured code changes](evidence/signature-code-metrics.json). Application, test and operational-script lines are counted separately; documentation, comments and docstrings are excluded.
