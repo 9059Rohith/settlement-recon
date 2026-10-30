@@ -1,0 +1,14 @@
+{
+  "verified_at_utc": "2026-10-30T16:01:49.734964+00:00",
+  "scope": "Actual local TCP HTTP against the minimal installed runtime and real PostgreSQL",
+  "image": "sha256:0165011f08f0d4ece652fd052dc7558234a3fc80b459fe7462358d11893049c1",
+  "user": "10001:10001",
+  "read_only_root": true,
+  "checks": {
+    "durable_payment_and_unlinked_statement_ingested": true,
+    "case_repeatable_read": true,
+    "anonymous_analyze_denied": true,
+    "advisory_exact_allocation": true,
+    "ledger_still_unmatched": true
+  }
+}

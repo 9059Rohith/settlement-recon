@@ -51,3 +51,13 @@ A source checksum records provenance. It is not proof that the raw object was re
 ## ADR-007: scope measured work before applying result bounds
 
 The evaluator generates an explicit set of payment IDs and restricts reconciliation to them before the 10,000-group response bound. Otherwise unrelated historical rows can hide the benchmark workload and produce an invalid correctness result. `test_evaluation.py` reproduces that case with more than10,000 older rows. The evaluator also records30 one-payment explanations alongside30 reconciliation/replay samples. These are reproducible local observations, not capacity or service guarantees.
+
+## ADR-008: investigate all optimal allocations without applying them
+
+Settlement Forensics accepts a strictly bounded case of residual obligations and unlinked bank legs. Candidate groups respect currency, integer tolerance, optional reference agreement and calendar windows. Connected components of the candidate-overlap graph are independent. Within a bounded component, memoized set packing maximizes a documented lexicographic tuple: matched count, complete reference agreement, negative absolute difference, complete date evidence, negative total lag and negative leg count. No amount value is compared across currencies and no score is a probability.
+
+A second traversal follows every transition preserving the optimal score. Only a non-null assignment shared by all optima becomes a suggestion. Ties remain ambiguous. Candidate-enumeration exhaustion cannot safely retain an apparent optimum, so it abstains for the whole case; capacity/search exhaustion abstains for the affected component. Counts of optimal assignments may cap without dropping alternative-choice evidence. Independent tiny exhaustive-oracle tests verify consensus.
+
+Case extraction selects explicit payments and one bank source in a read-only snapshot. It subtracts already recorded net-plus-fee totals and includes only orphan legs; receipts are validated, including the existing linked legs used in balance calculation. PostgreSQL SUM(bigint) returns NUMERIC, so integral aggregates are explicitly converted at the SQL boundary before strict wire validation. A real PostgreSQL concurrent-commit test reproduced that portability issue and pins snapshot/pool-reset behavior.
+
+This is an analyst investigation, never an automatic ledger update. The synthetic study intentionally includes an indistinguishable false-business-match decoy; unique optimization does not establish business identity. Requiring complete references reduces coverage as well as false suggestions on that designed study. Negative adjustments, FX conversion, fractional-leg allocations and production-labelled evaluation remain outside this model.

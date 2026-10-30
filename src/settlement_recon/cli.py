@@ -8,6 +8,8 @@ from pathlib import Path
 
 from settlement_recon.api import from_environment
 from settlement_recon.domain import MAX_BYTES, DomainError
+from settlement_recon.forensics import analyze
+from settlement_recon.forensics_http import BODY_LIMIT, load_case
 from settlement_recon.partner import pull_partner
 
 
@@ -40,6 +42,8 @@ def main():
     sub.add_parser("demo")
     sub.add_parser("reconcile")
     sub.add_parser("batches")
+    forensics = sub.add_parser("forensics", help="Investigate unlinked settlement allocations")
+    forensics.add_argument("file", type=Path)
     explain = sub.add_parser(
         "explain", help="Explain one payment/currency using original batch lineage"
     )
@@ -55,6 +59,17 @@ def main():
     pull = sub.add_parser("pull-partner")
     pull.add_argument("url")
     args = parser.parse_args()
+    if args.command == "forensics":
+        try:
+            with args.file.open("rb") as handle:
+                raw = handle.read(BODY_LIMIT + 1)
+            if len(raw) > BODY_LIMIT:
+                raise ValueError("Investigation body exceeds limit")
+            result = analyze(load_case(raw))
+        except (OSError, ValueError):
+            parser.exit(2, "Invalid or unavailable bounded investigation file\n")
+        print(json.dumps(result, indent=2))
+        return
     service = from_environment().state.service
     if args.command == "demo":
         result = demo(service)

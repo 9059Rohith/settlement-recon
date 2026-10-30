@@ -1,0 +1,21 @@
+{
+  "baseline_commit": "1e2f5b2",
+  "method": "Net growth of nonblank, noncomment Python physical lines excluding module/class/function docstrings. Continuation lines count; documentation/evidence/configuration/generated dependencies excluded.",
+  "categories": {
+    "production": {
+      "before": 1210,
+      "after": 2251,
+      "net_added": 1041
+    },
+    "tests": {
+      "before": 1083,
+      "after": 1536,
+      "net_added": 453
+    },
+    "operational_scripts": {
+      "before": 302,
+      "after": 326,
+      "net_added": 24
+    }
+  }
+}

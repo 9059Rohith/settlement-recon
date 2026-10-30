@@ -25,6 +25,9 @@ from starlette.concurrency import run_in_threadpool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from settlement_recon.domain import MAX_BYTES, DomainError, FileArchive, Reconciler
+from settlement_recon.forensics_case import extract_case
+from settlement_recon.forensics_http import install as install_forensics
+from settlement_recon.forensics_models import ForensicsCase
 from settlement_recon.schemas import ReconciliationExplanation
 
 logger = logging.getLogger("settlement_recon")
@@ -279,6 +282,18 @@ def create_app(
     def metrics():
         return Response(generate_latest(registry), media_type="text/plain; version=0.0.4")
 
+    @app.get(
+        "/v1/forensics/case",
+        dependencies=[Depends(authenticate)],
+        response_model=ForensicsCase,
+        tags=["Settlement Forensics"],
+    )
+    def investigation_case(
+        source: str, payment_id: Annotated[list[str], Query(min_length=1, max_length=24)]
+    ):
+        return extract_case(service.engine, payment_id, source)
+
+    install_forensics(app, authenticate)
     return app
 
 

@@ -1,5 +1,11 @@
 # Executed verification — 2026-10-30
 
+## Current signature: Settlement Forensics
+
+The current native Python3.15.1 release passes **135 tests, no skips** against real PostgreSQL17.9 and encrypted MinIO (90.54s), plus135 on Windows Python3.12. Its actual installed nonroot/read-only image completed a TCP ingestion→SQL-case→advisory-analysis workflow without linking the ledger. The fresh all-severity image scan detected0 known vulnerabilities/0 secrets. [Detailed evidence](evidence/forensics-verification.md), [runtime output](evidence/public-runtime-tests.txt), [native HTTP](evidence/forensics-native-http.json), [current scan](evidence/signature-image-scan.json).
+
+The designed640-call synthetic study includes an indistinguishable decoy, reports incorrect suggestions honestly and shows the coverage cost of requiring references. This is algorithm evaluation, not a claim of production matching accuracy. An independent exhaustive oracle checked100 additional split/tolerance/currency cases. Earlier revision counts below are historical and superseded by the current suite.
+
 ## Reconciliation explanation revision
 
 The authenticated explanation endpoint and CLI return exact matching rules, full-group

@@ -17,4 +17,7 @@
 | Investigation / documentation / SQL reasoning | typed authenticated explanation, shared rule classifier, full-group lineage checks, read snapshot | test_explanation.py; PostgreSQL concurrent-writer/read-only-reset test; CLI explanation test |
 | Reproducible evaluation | generated-ID-scoped reconciliation and one-payment explanation timings | test_evaluation.py; evaluate.py outputs assertion-backed samples |
 
+| Data science / decision evaluation | Bounded exact allocation, all-optimal ambiguity, designed precision/coverage study | `forensics*.py`, independent tiny oracle, `evidence/forensics-evaluation.json` |
+| Operational investigation | Residual-obligation / orphan-leg extraction from one read-only SQL snapshot | `forensics_case.py`, concurrent PostgreSQL snapshot test and native HTTP evidence |
+
 Spark and Kubernetes are deliberately covered by the other portfolio projects; this service uses SQL and ECS where sufficient. See VERIFICATION.md for the exact boundary between executed checks, SDK unit tests and unexecuted cloud integration.

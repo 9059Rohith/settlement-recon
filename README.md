@@ -1,6 +1,6 @@
 # Settlement Recon
 
-**Explain every payment mismatch. Replay every input safely. Keep the evidence.**
+**Explain payment mismatches. Investigate allocation ambiguity. Preserve the evidence.**
 
 A Python and SQL reconciliation service for synthetic cross-border payments. It joins payment events with bank statements, accounts for fees in exact currency minor units, and explains why a payment is matched, partial, missing, overpaid or orphaned. Every accepted or quarantined batch retains its original input checksum.
 
@@ -17,7 +17,7 @@ Settlement Recon treats **correctness, provenance and recovery** as the product.
 ## Five capabilities worth reviewing
 
 1. **Exact financial rules with explicit currency boundaries.** Decimal strings become integer minor units. Net settlement plus fee is compared with the original payment; EUR never silently settles USD. USD/EUR/GBP/INR use two decimal places, JPY uses zero. [Rules and tests](tests/test_domain.py)
-2. **Explainable results with source lineage.** An authenticated explanation returns the matching rule, complete monetary totals, the payment receipt, and up to 100 deterministically ordered bank legs with source batch IDs and SHA256 checksums. Three SELECTs share one read snapshot; truncating evidence never truncates the totals. [Implementation](src/settlement_recon/explanation.py)
+2. **Explainable decisions and ambiguity-aware investigation.** Authenticated explanations return exact rules, totals and bounded source receipts from one snapshot. Settlement Forensics additionally derives residual obligations and orphan legs from SQL, then searches all optimal allocations; ties abstain instead of inventing a confident link. [Explanation](src/settlement_recon/explanation.py) · [Allocation engine](src/settlement_recon/forensics.py)
 3. **Replay safety across workers and restarts.** A batch is identified by kind, source and content checksum. PostgreSQL advisory transactions serialize writers; unique business keys reject conflicting duplicates. An identical replay returns its original receipt. [Concurrent PostgreSQL tests](tests/test_postgres.py)
 4. **Quarantine without partial financial effects.** Parsing, schema, precision and duplicate checks gate the whole batch. Invalid inputs remain archived, but create no payment or settlement rows. A corrected file creates a new receipt; it does not rewrite the rejected evidence. [Failure and recovery tests](tests/test_archive.py)
 5. **An operated, reproducible backend.** Digest-pinned nonroot containers, protected metrics, bounded requests, schema startup locks, strict hosted database TLS and persistent raw archival support real public releases. AWS ECS/RDS/S3 infrastructure and an Airflow DAG are supplied separately with their execution boundaries documented. [Deployment profile](docs/public-deployment.md)
@@ -127,6 +127,31 @@ docker compose exec api settlement-recon explain demo-partial INR --limit 5
 
 The local API is at `http://127.0.0.1:8011/docs`. Enter the locally generated `API_TOKEN` using **Authorize**. Setup refuses to overwrite an existing `.env`; keep that file private. The public console requires no token, while private operations do.
 
+## Signature capability: Settlement Forensics
+
+Investigate unlinked bank legs using **all-optimal allocation consensus**, rather than selecting an arbitrary nearest amount. Candidate groups must satisfy an explicit currency, integer tolerance, reference and calendar-window policy. A bounded component-wise exact solver first maximizes matched payment count, then the declared evidence preferences. A suggestion is returned only when its allocation agrees across every optimum; ambiguous or exhausted components abstain. Suggestions never modify the ledger.
+
+The distinction matters: two identical payments and two identical bank legs have two equally good allocations. Returning the lexicographically first would invent certainty. The solver reports ambiguity, and the tests compare small problems with an independent exhaustive oracle. A unique mathematical optimum can still be a false business match when identifying evidence is absent.
+
+```powershell
+# No database or credentials required for a local, synthetic investigation.
+settlement-recon forensics examples/forensics.json
+python scripts/evaluate_forensics.py --trials 40
+```
+
+The protected HTTP equivalent is `POST /v1/forensics/analyze`, with the [example request](examples/forensics.json). `GET /v1/forensics/case?payment_id=YOUR_ID&source=YOUR_BANK_SOURCE` extracts selected positive residual obligations and orphan bank legs from the real database in one read-only snapshot. It preserves source receipts and excludes already-linked legs; extraction also leaves the ledger unchanged. Feed the returned `case` into analysis after reviewing its evidence limitations.
+
+| Designed synthetic study, 40 trials × 8 scenarios | Exact-allocation precision | Payment coverage | False suggestions |
+|---|---:|---:|---:|
+| Default evidence policy | 90.91% | 68.75% | 40 |
+| Require complete matching references | 100% | 50% | 0 |
+
+[Raw study, per-scenario results and timings](evidence/forensics-evaluation.json). Labels never enter the solver. These are designed synthetic strata, not production accuracy estimates: the deliberately indistinguishable decoy exposes why amount/date agreement is inadequate. Stricter evidence trades coverage for fewer false suggestions; no probability score or trained model is implied.
+
+The analysis caps requests at 24 payments / 32 legs, splits at three, connected components at 10 payments / 16 legs, enumeration at 10,000 candidates and 150,000 combinations, and memoized search at 50,000 states with a two-second wall budget. The API authenticates before reading bodies, limits them to 128 KB / five seconds, rejects duplicate keys and deep structures, redacts invalid input and limits concurrent investigations to two. Exhaustion is explicit. A source with more than 32 orphan legs is rejected rather than silently sampled.
+
+[Allocation engine](src/settlement_recon/forensics.py) · [Exact solver](src/settlement_recon/forensics_solver.py) · [SQL case extraction](src/settlement_recon/forensics_case.py) · [Failure/oracle tests](tests/test_forensics.py) · [Snapshot tests](tests/test_forensics_case.py)
+
 ## API surface
 
 | Method | Route | Contract |
@@ -138,6 +163,8 @@ The local API is at `http://127.0.0.1:8011/docs`. Enter the locally generated `A
 | GET | `/v1/batches` | Latest 100 receipts and diagnostics |
 | GET | `/v1/batches/{id}/verify` | Re-read and verify archived input |
 | GET | `/metrics` | Protected HTTP and ingestion metrics |
+| POST | `/v1/forensics/analyze` | Advisory bounded allocation, ambiguity and optimality report |
+| GET | `/v1/forensics/case?payment_id=ID&source=BANK` | Snapshot-consistent residual obligations and orphan-leg evidence |
 
 All routes in this table require a bearer token. An optional reader token can inspect evidence but cannot ingest. Missing or short writer credentials fail closed.
 

@@ -1,0 +1,17 @@
+{
+  "payments": [
+    {"payment_id": "invoice-100", "currency": "USD", "amount_minor": 10000,
+     "reference": "INV-100", "expected_on": "2026-10-29"},
+    {"payment_id": "invoice-200", "currency": "USD", "amount_minor": 6000,
+     "reference": "INV-200", "expected_on": "2026-10-29"}
+  ],
+  "legs": [
+    {"leg_id": "bank-a", "currency": "USD", "net_minor": 5900, "fee_minor": 100,
+     "reference": "INV100", "settled_on": "2026-10-30"},
+    {"leg_id": "bank-b", "currency": "USD", "net_minor": 3900, "fee_minor": 100,
+     "reference": "INV100", "settled_on": "2026-10-30"},
+    {"leg_id": "bank-c", "currency": "USD", "net_minor": 5900, "fee_minor": 100,
+     "reference": "INV200", "settled_on": "2026-10-30"}
+  ],
+  "policy": {"max_split": 2, "require_complete_reference": true}
+}
