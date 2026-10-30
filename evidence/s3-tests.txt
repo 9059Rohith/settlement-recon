@@ -1,0 +1,56 @@
+....F                                                                    [100%]
+================================== FAILURES ===================================
+__________ test_actual_s3_compatible_archive_replay_and_verification __________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1772/test_actual_s3_compatible_arch0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001A8DAAE8E90>
+
+    @pytest.mark.skipif(
+        not os.environ.get("TEST_S3_ENDPOINT"),
+        reason="Set TEST_S3_ENDPOINT for real S3-compatible service",
+    )
+    def test_actual_s3_compatible_archive_replay_and_verification(tmp_path, monkeypatch):
+        monkeypatch.setenv("AWS_ENDPOINT_URL_S3", os.environ["TEST_S3_ENDPOINT"])
+        monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+        client = boto3.session.Session().client("s3")
+        bucket = "recon-test-" + uuid4().hex
+        client.create_bucket(Bucket=bucket)
+        archive = S3Archive(bucket)
+        service = Reconciler(f"sqlite:///{tmp_path / 'test.db'}", archive)
+        content = json.dumps(
+            {"payments": [{"payment_id": "s3-test", "amount": "100.00", "currency": "USD"}]}
+        ).encode()
+        try:
+>           first = service.ingest("payments", "s3-test", content)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_s3_integration.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\settlement_recon\domain.py:217: in ingest
+    checksum = self.archive.put(raw)  # no database effects if archival fails
+               ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <settlement_recon.s3.S3Archive object at 0x000001A8DAA29C70>
+content = b'{"payments": [{"payment_id": "s3-test", "amount": "100.00", "currency": "USD"}]}'
+
+    def put(self, content: bytes) -> str:
+        checksum = hashlib.sha256(content).hexdigest()
+        try:
+            self.client.put_object(
+                Bucket=self.bucket,
+                Key=self.key(checksum),
+                Body=content,
+                IfNoneMatch="*",
+                Metadata={"sha256": checksum},
+                ServerSideEncryption="AES256",
+            )
+        except ClientError as exc:
+            if exc.response["ResponseMetadata"]["HTTPStatusCode"] != 412:
+>               raise OSError("S3 archival unavailable") from None
+E               OSError: S3 archival unavailable
+
+src\settlement_recon\s3.py:41: OSError
+=========================== short test summary info ===========================
+FAILED tests/test_s3_integration.py::test_actual_s3_compatible_archive_replay_and_verification
+1 failed, 4 passed in 6.13s

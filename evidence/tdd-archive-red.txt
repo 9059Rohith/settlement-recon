@@ -1,0 +1,27 @@
+F.                                                                       [100%]
+================================== FAILURES ===================================
+_________________ test_failed_flush_cannot_publish_raw_object _________________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1749/test_failed_flush_cannot_publi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002318FF8FE30>
+
+    def test_failed_flush_cannot_publish_raw_object(tmp_path, monkeypatch):
+        archive = FileArchive(tmp_path)
+        def fail(_):
+            raise OSError("injected durable flush failure")
+        monkeypatch.setattr("settlement_recon.domain.os.fsync", fail)
+        with pytest.raises(OSError):
+            archive.put(b"uncommitted input")
+>       assert not (tmp_path / hashlib.sha256(b"uncommitted input").hexdigest()).exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1749/test_failed_flush_cannot_publi0') / '6ed1ba2d451803eb02dafa59ae46ae9e440eec366e964b4708d4b1b9a1685571').exists
+E        +      where '6ed1ba2d451803eb02dafa59ae46ae9e440eec366e964b4708d4b1b9a1685571' = <built-in method hexdigest of _hashlib.HASH object at 0x000002318FF9C810>()
+E        +        where <built-in method hexdigest of _hashlib.HASH object at 0x000002318FF9C810> = <sha256 _hashlib.HASH object @ 0x000002318FF9C810>.hexdigest
+E        +          where <sha256 _hashlib.HASH object @ 0x000002318FF9C810> = <built-in function openssl_sha256>(b'uncommitted input')
+E        +            where <built-in function openssl_sha256> = hashlib.sha256
+
+tests\test_archive.py:16: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_archive.py::test_failed_flush_cannot_publish_raw_object - A...
+1 failed, 1 passed in 3.16s

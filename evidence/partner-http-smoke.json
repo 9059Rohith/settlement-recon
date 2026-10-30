@@ -1,0 +1,7 @@
+{
+  "synthetic_partner_real_http": true,
+  "backend": "postgresql",
+  "authenticated_fetch": true,
+  "safe_replay": true,
+  "payment_minor": 12550
+}

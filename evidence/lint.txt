@@ -1,0 +1,56 @@
+E501 Line too long (160 > 100)
+   --> scripts\evaluate.py:98:101
+    |
+ 96 | …
+ 97 | …
+ 98 | …30 warm queries/replays; no network load, percentile nearest lower rank. Not a production SLA.",
+    |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 99 | …
+100 | …
+    |
+
+E501 Line too long (105 > 100)
+  --> src\settlement_recon\api.py:31:101
+   |
+29 |         description=(
+30 |             "Synthetic cross-border payment reconciliation. Monetary strings use exact currency "
+31 |             "minor units. Upload JSON payments or CSV statements; inspect quarantine and replay results."
+   |                                                                                                     ^^^^^
+32 |         ),
+33 |     )
+   |
+
+B008 Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
+  --> src\settlement_recon\api.py:49:73
+   |
+47 |     )
+48 |
+49 |     def authenticate(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> str:
+   |                                                                         ^^^^^^^^^^^^^^^
+50 |         if len(token) < 32:
+51 |             raise HTTPException(503, "Authentication is not configured")
+   |
+
+E501 Line too long (108 > 100)
+  --> tests\test_api.py:35:101
+   |
+33 |         "replayed"
+34 |     ]
+35 |     csv = "row_id,payment_id,currency,net_amount,fee,settled_at\nr1,p1,USD,9.50,0.50,2026-10-30T10:00:00Z\n"
+   |                                                                                                     ^^^^^^^^
+36 |     assert (
+37 |         client.post("/v1/ingest/statement?source=bank", content=csv, headers=headers).status_code
+   |
+
+E501 Line too long (116 > 100)
+  --> tests\test_postgres.py:25:101
+   |
+23 |         )
+24 |     assert len({r["batch_id"] for r in results}) == 1
+25 |     csv = f"row_id,payment_id,currency,net_amount,fee,settled_at\n{pid},{pid},USD,99.01,1.00,2026-10-30T10:00:00Z\n"
+   |                                                                                                     ^^^^^^^^^^^^^^^^
+26 |     service.ingest("statement", "postgres-test", csv.encode())
+27 |     rows = [r for r in service.reconcile() if r["payment_id"] == pid]
+   |
+
+Found 5 errors.

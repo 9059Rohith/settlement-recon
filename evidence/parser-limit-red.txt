@@ -1,0 +1,89 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+___________________ test_deep_json_is_auditable_quarantine ____________________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1796/test_deep_json_is_auditable_qu0')
+
+    def test_deep_json_is_auditable_quarantine(tmp_path):
+        service = Reconciler(f"sqlite:///{tmp_path / 'test.db'}", FileArchive(tmp_path / "raw"))
+        content = b'{"payments":' + b"[" * 2000 + b"0" + b"]" * 2000 + b"}"
+>       assert service.ingest("payments", "deep-json", content)["status"] == "quarantined"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_parser_limits.py:7: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\settlement_recon\domain.py:236: in ingest
+    rows = parse(kind, raw)
+           ^^^^^^^^^^^^^^^^
+src\settlement_recon\domain.py:153: in parse
+    body = json.loads(decoded, object_pairs_hook=unique_json_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <json.decoder.JSONDecoder object at 0x0000019A052510D0>
+s = '{"payments":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}'
+idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+>           obj, end = self.scan_once(s, idx)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+E           RecursionError: maximum recursion depth exceeded while decoding a JSON array from a unicode string
+
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:353: RecursionError
+_____________________ test_csv_reader_stops_at_row_bound ______________________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1796/test_csv_reader_stops_at_row_b0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000019A0538D610>
+
+    def test_csv_reader_stops_at_row_bound(tmp_path, monkeypatch):
+        service = Reconciler(f"sqlite:///{tmp_path / 'test.db'}", FileArchive(tmp_path / "raw"))
+        class BoundedReader:
+            fieldnames = ["row_id", "payment_id", "currency", "net_amount", "fee", "settled_at"]
+            def __iter__(self):
+                for i in range(MAX_ROWS + 1):
+                    yield {"row_id": f"r{i}", "payment_id": "p1", "currency": "USD",
+                           "net_amount": "1", "fee": "0", "settled_at": "2026-10-30T10:00:00Z"}
+                raise AssertionError("Parser consumed more than its row budget")
+        monkeypatch.setattr("settlement_recon.domain.csv.DictReader", lambda *a, **kw: BoundedReader())
+>       assert service.ingest("statement", "row-budget", b"bounded input")["status"] == "quarantined"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_parser_limits.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\settlement_recon\domain.py:236: in ingest
+    rows = parse(kind, raw)
+           ^^^^^^^^^^^^^^^^
+src\settlement_recon\domain.py:165: in parse
+    rows = list(reader)
+           ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_parser_limits.test_csv_reader_stops_at_row_bound.<locals>.BoundedReader object at 0x0000019A0538D640>
+
+    def __iter__(self):
+        for i in range(MAX_ROWS + 1):
+            yield {"row_id": f"r{i}", "payment_id": "p1", "currency": "USD",
+                   "net_amount": "1", "fee": "0", "settled_at": "2026-10-30T10:00:00Z"}
+>       raise AssertionError("Parser consumed more than its row budget")
+E       AssertionError: Parser consumed more than its row budget
+
+tests\test_parser_limits.py:19: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_parser_limits.py::test_deep_json_is_auditable_quarantine - ...
+FAILED tests/test_parser_limits.py::test_csv_reader_stops_at_row_bound - Asse...
+2 failed in 1.63s

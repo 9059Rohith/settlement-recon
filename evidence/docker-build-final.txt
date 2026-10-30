@@ -1,0 +1,75 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 594B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 833B 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 134B done
+#4 DONE 0.0s
+
+#5 [1/7] FROM docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+#5 resolve docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 17.01kB 0.0s done
+#6 DONE 0.0s
+
+#7 [2/7] WORKDIR /app
+#7 CACHED
+
+#8 [3/7] COPY requirements.txt ./
+#8 CACHED
+
+#9 [4/7] RUN pip install --no-cache-dir -r requirements.txt && groupadd -g 10001 app && useradd -u 10001 -g app app && mkdir /data && chown app:app /data
+#9 CACHED
+
+#10 [5/7] COPY pyproject.toml ./
+#10 CACHED
+
+#11 [6/7] COPY src ./src
+#11 DONE 0.0s
+
+#12 [7/7] RUN pip install --no-deps .
+#12 2.480 Processing /app
+#12 2.488   Installing build dependencies: started
+#12 14.71   Installing build dependencies: finished with status 'done'
+#12 14.71   Getting requirements to build wheel: started
+#12 15.57   Getting requirements to build wheel: finished with status 'done'
+#12 15.57   Preparing metadata (pyproject.toml): started
+#12 16.39   Preparing metadata (pyproject.toml): finished with status 'done'
+#12 16.40 Building wheels for collected packages: settlement-recon
+#12 16.40   Building wheel for settlement-recon (pyproject.toml): started
+#12 17.25   Building wheel for settlement-recon (pyproject.toml): finished with status 'done'
+#12 17.26   Created wheel for settlement-recon: filename=settlement_recon-0.1.0-py3-none-any.whl size=13252 sha256=1a011bc8cd63aeee4f2de40cb4c8e16361ae9283c997c7298de09f86e98dce81
+#12 17.26   Stored in directory: /tmp/pip-ephem-wheel-cache-3spo_6ti/wheels/54/1b/b7/aa63e25c8f14f4f2ae7b04e6097bdecb770e455c5c1ee0a600
+#12 17.26 Successfully built settlement-recon
+#12 17.26 Installing collected packages: settlement-recon
+#12 17.32 Successfully installed settlement-recon-0.1.0
+#12 17.32 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#12 17.63 
+#12 17.63 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
+#12 17.63 [notice] To update, run: pip install --upgrade pip
+#12 DONE 17.8s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 0.3s done
+#13 exporting manifest sha256:8c322b61044e291db77b93c29d87472adf6892e793f174c8e32e714a76b28660 0.0s done
+#13 exporting config sha256:81f03d387adfebae118136a120153b6c603f7c9e533d0cc2399923f300e0d153 0.0s done
+#13 exporting attestation manifest sha256:bf6496d92f667eefb210e61b6074dd8c3064a2df3794e93c783b1b6b73123c70 0.0s done
+#13 exporting manifest list sha256:4e436d5d280f8f3aed5988fa712ff432ee0520e6f7e19b1b848a0f48e39d5c64
+#13 exporting manifest list sha256:4e436d5d280f8f3aed5988fa712ff432ee0520e6f7e19b1b848a0f48e39d5c64 0.0s done
+#13 naming to docker.io/library/settlement-recon-api:latest done
+#13 unpacking to docker.io/library/settlement-recon-api:latest 0.1s done
+#13 DONE 0.7s
+
+#14 resolving provenance for metadata file
+#14 DONE 0.0s
+ settlement-recon-api  Built

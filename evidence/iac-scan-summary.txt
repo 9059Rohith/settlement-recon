@@ -1,0 +1,13 @@
+2026-10-30T13:22:37Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-10-30T13:22:37Z	INFO	[checks-client] Need to update the checks bundle
+2026-10-30T13:22:37Z	INFO	[checks-client] Downloading the checks bundle...
+31.27 KiB / 234.57 KiB [------->____________________________________________________] 13.33% ? p/s ?79.25 KiB / 234.57 KiB [-------------------->_______________________________________] 33.79% ? p/s ?143.25 KiB / 234.57 KiB [------------------------------------>______________________] 61.07% ? p/s ?159.25 KiB / 234.57 KiB [------------------------------>______________] 67.89% 213.36 KiB p/s ETA 0s191.25 KiB / 234.57 KiB [------------------------------------>________] 81.53% 213.36 KiB p/s ETA 0s223.25 KiB / 234.57 KiB [------------------------------------------>__] 95.17% 213.36 KiB p/s ETA 0s234.57 KiB / 234.57 KiB [----------------------------------------------] 100.00% 207.70 KiB p/s 1.3s2026-10-30T13:22:45Z	INFO	[terraform scanner] Scanning root module	file_path="."
+2026-10-30T13:22:45Z	WARN	[terraform parser] Variable values were not found in the environment or variable files. Evaluating may not work correctly.	module="root" variables="api_secret_arn, certificate_arn, image"
+2026-10-30T13:22:45Z	INFO	[terraform executor] Ignore finding	rule="aws-elb-alb-not-public" range="main.tf:255-261"
+2026-10-30T13:22:45Z	INFO	Detected config files	num=2
+
+📣 Notices:
+  - Version 0.76.1 of Trivy is now available, current version is 0.76.0
+
+To suppress version checks, run Trivy scans with the --skip-version-check flag
+

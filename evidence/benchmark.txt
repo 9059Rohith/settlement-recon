@@ -1,0 +1,31 @@
+{
+  "recorded_at_utc": "2026-10-30T13:15:03Z",
+  "python": "3.12.0",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "database": "sqlite",
+  "rows": 1000,
+  "payment_ingestion_ms": 65.702,
+  "statement_ingestion_ms": 94.591,
+  "reconciliation": {
+    "n": 30,
+    "p50_ms": 37.361,
+    "p95_ms": 41.825,
+    "p99_ms": 44.08,
+    "mean_ms": 37.418
+  },
+  "replay": {
+    "n": 30,
+    "p50_ms": 30.51,
+    "p95_ms": 60.761,
+    "p99_ms": 67.927,
+    "mean_ms": 34.578
+  },
+  "malformed_batch_detection_ms": 42.462,
+  "restart_replay_ms": 23.182,
+  "correctness": {
+    "matched_rows": 1000,
+    "replay_same_batch": true,
+    "bad_batch_quarantined": true
+  },
+  "methodology": "One local process, cold insert then 30 warm queries/replays; no network load, percentile nearest lower rank. Not a production SLA."
+}

@@ -1,0 +1,263 @@
+FFFFFF                                                                   [100%]
+================================== FAILURES ===================================
+__________ test_truncated_csv_row_is_quarantined_not_a_server_error ___________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_truncated_csv_row_is_quar0')
+
+    def test_truncated_csv_row_is_quarantined_not_a_server_error(tmp_path):
+        svc = service(tmp_path)
+        raw = b"row_id,payment_id,currency,net_amount,fee,settled_at\nr1,p1,USD,10,0\n"
+>       result = svc.ingest("statement", "bank", raw)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_review_regressions.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\settlement_recon\domain.py:220: in ingest
+    rows = parse(kind, raw)
+           ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+kind = 'statement'
+raw = b'row_id,payment_id,currency,net_amount,fee,settled_at\nr1,p1,USD,10,0\n'
+
+    def parse(kind: str, raw: bytes) -> list[dict]:
+        try:
+            decoded = raw.decode("utf-8-sig")
+            if kind == "payments":
+                body = json.loads(decoded)
+                if not isinstance(body, dict) or set(body) != {"payments"}:
+                    raise DomainError("Expected an object containing payments")
+                rows = body["payments"]
+                required = {"payment_id", "amount", "currency"}
+            else:
+                reader = csv.DictReader(io.StringIO(decoded, newline=""), strict=True)
+                required = {"row_id", "payment_id", "currency", "net_amount", "fee", "settled_at"}
+                if not reader.fieldnames or set(reader.fieldnames) != required:
+                    raise DomainError("Statement columns must match the documented schema")
+                if len(reader.fieldnames) != len(required):
+                    raise DomainError("Duplicate CSV columns")
+                rows = list(reader)
+            if not isinstance(rows, list) or not 1 <= len(rows) <= MAX_ROWS:
+                raise DomainError("Batch must contain between 1 and 10000 rows")
+            normal = []
+            for row in rows:
+                if not isinstance(row, dict) or set(row) != required:
+                    raise DomainError("Unexpected row schema")
+                currency = row["currency"]
+                if not isinstance(currency, str):
+                    raise DomainError("Invalid currency")
+                item = {"payment_id": identifier(row["payment_id"]), "currency": currency}
+                if kind == "payments":
+                    item["amount_minor"] = money(row["amount"], currency)
+                else:
+                    item["row_id"] = identifier(row["row_id"])
+                    item["net_minor"] = money(row["net_amount"], currency)
+                    item["fee_minor"] = money(row["fee"], currency)
+>                   moment = datetime.fromisoformat(row["settled_at"].replace("Z", "+00:00"))
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+E                   AttributeError: 'NoneType' object has no attribute 'replace'
+
+src\settlement_recon\domain.py:170: AttributeError
+___________ test_non_ascii_bearer_is_unauthorized_not_server_error ____________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_non_ascii_bearer_is_unaut0')
+
+    def test_non_ascii_bearer_is_unauthorized_not_server_error(tmp_path):
+        with TestClient(create_app(service(tmp_path), "test-token-000000000000000000000000000")) as client:
+>           result = client.get("/v1/batches", headers={b"Authorization": b"Bearer \xff\xfe"})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_review_regressions.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\httpx\_client.py:1053: in get
+    return self.request(
+.venv\Lib\site-packages\starlette\testclient.py:518: in request
+    return super().request(
+.venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx\_client.py:928: in send
+    raise exc
+.venv\Lib\site-packages\httpx\_client.py:922: in send
+    response.read()
+.venv\Lib\site-packages\httpx\_models.py:881: in read
+    self._content = b"".join(self.iter_bytes())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx\_models.py:897: in iter_bytes
+    for raw_bytes in self.iter_raw():
+.venv\Lib\site-packages\httpx\_models.py:951: in iter_raw
+    for raw_stream_bytes in self.stream:
+.venv\Lib\site-packages\httpx\_client.py:153: in __iter__
+    for chunk in self._stream:
+.venv\Lib\site-packages\starlette\testclient.py:384: in iter_body
+    exit_stack.close()
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:606: in close
+    self.__exit__(None, None, None)
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:598: in __exit__
+    raise exc_details[1]
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:583: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\testclient.py:399: in close_app
+    raise exception
+.venv\Lib\site-packages\anyio\from_thread.py:265: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\testclient.py:366: in run_app
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\fastapi\applications.py:1194: in __call__
+    await super().__call__(scope, receive, send)
+.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+.venv\Lib\site-packages\fastapi\telemetry\_asgi.py:151: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\base.py:203: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\settlement_recon\api.py:74: in observe
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\middleware\base.py:179: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+.venv\Lib\site-packages\starlette\middleware\base.py:149: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:683: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:2811: in app
+    await route.handle(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:1330: in handle
+    await super().handle(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:289: in handle
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:166: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\routing.py:152: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\fastapi\routing.py:511: in app
+    solved_result = await solve_dependencies(
+.venv\Lib\site-packages\fastapi\dependencies\utils.py:733: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\anyio\to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2706: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1100: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+credentials = HTTPAuthorizationCredentials(scheme='Bearer', credentials='ÿþ')
+
+    def authenticate(
+        credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
+    ) -> str:
+        if len(token) < 32:
+            raise HTTPException(503, "Authentication is not configured")
+        if credentials is None:
+            raise HTTPException(
+                401, "Bearer token required", headers={"WWW-Authenticate": "Bearer"}
+            )
+>       if hmac.compare_digest(credentials.credentials, token):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: comparing strings with non-ASCII characters is not supported
+
+src\settlement_recon\api.py:60: TypeError
+_________________ test_blank_token_configuration_fails_closed _________________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_blank_token_configuration0')
+
+    def test_blank_token_configuration_fails_closed(tmp_path):
+        with TestClient(create_app(service(tmp_path), " " * 40)) as client:
+>           assert client.get("/v1/batches").status_code == 503
+E           AssertionError: assert 401 == 503
+E            +  where 401 = <Response [401 Unauthorized]>.status_code
+E            +    where <Response [401 Unauthorized]> = get('/v1/batches')
+E            +      where get = <starlette.testclient.TestClient object at 0x000001FF055185C0>.get
+
+tests\test_review_regressions.py:30: AssertionError
+________ test_cumulative_money_limit_prevents_sqlite_integer_overflow _________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_cumulative_money_limit_pr0')
+
+    def test_cumulative_money_limit_prevents_sqlite_integer_overflow(tmp_path):
+        svc = service(tmp_path)
+        header = "row_id,payment_id,currency,net_amount,fee,settled_at\n"
+        raw = header + "\n".join(
+            f"r{i},p1,USD,9999999999999.99,9999999999999.99,2026-10-30T10:00:00Z"
+            for i in range(5000))
+        result = svc.ingest("statement", "bank", raw.encode())
+>       assert result["status"] == "quarantined"
+E       AssertionError: assert 'accepted' == 'quarantined'
+E         
+E         - quarantined
+E         + accepted
+
+tests\test_review_regressions.py:40: AssertionError
+______________ test_cumulative_bound_across_sources_and_batches _______________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_cumulative_bound_across_s0')
+
+    def test_cumulative_bound_across_sources_and_batches(tmp_path):
+        svc = service(tmp_path)
+        header = "row_id,payment_id,currency,net_amount,fee,settled_at\n"
+        assert svc.ingest("statement", "bank1", (header +
+            "r1,p1,USD,9999999999999.99,0,2026-10-30T10:00:00Z").encode())["status"] == "accepted"
+        result = svc.ingest("statement", "bank2", (header +
+            "r2,p1,USD,1,0,2026-10-30T10:00:00Z").encode())
+>       assert result["status"] == "quarantined"
+E       AssertionError: assert 'accepted' == 'quarantined'
+E         
+E         - quarantined
+E         + accepted
+
+tests\test_review_regressions.py:51: AssertionError
+_____________ test_duplicate_json_fields_do_not_silently_override _____________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1778/test_duplicate_json_fields_do_0')
+
+    def test_duplicate_json_fields_do_not_silently_override(tmp_path):
+        svc = service(tmp_path)
+        content = '{"payments":[{"payment_id":"p1","currency":"USD","amount":"1","amount":"2"}]}'
+>       assert svc.ingest("payments", "ledger", content.encode())["status"] == "quarantined"
+E       AssertionError: assert 'accepted' == 'quarantined'
+E         
+E         - quarantined
+E         + accepted
+
+tests\test_review_regressions.py:58: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\settlement-recon\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_review_regressions.py::test_truncated_csv_row_is_quarantined_not_a_server_error
+FAILED tests/test_review_regressions.py::test_non_ascii_bearer_is_unauthorized_not_server_error
+FAILED tests/test_review_regressions.py::test_blank_token_configuration_fails_closed
+FAILED tests/test_review_regressions.py::test_cumulative_money_limit_prevents_sqlite_integer_overflow
+FAILED tests/test_review_regressions.py::test_cumulative_bound_across_sources_and_batches
+FAILED tests/test_review_regressions.py::test_duplicate_json_fields_do_not_silently_override
+6 failed, 1 warning in 10.85s

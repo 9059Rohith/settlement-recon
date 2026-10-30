@@ -1,0 +1,39 @@
+name: settlement-recon
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: recon
+      POSTGRES_USER: recon
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recon -d recon"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 512m
+  api:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_NAME: recon
+      DB_USER: recon
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      API_TOKEN: ${API_TOKEN:?Set API_TOKEN to at least 32 characters}
+      READ_TOKEN: ${READ_TOKEN:-}
+      DATA_DIR: /data
+    ports: ["127.0.0.1:8011:8000"]
+    volumes: ["raw:/data"]
+    depends_on:
+      db: {condition: service_healthy}
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=16m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 512m
+    restart: unless-stopped
+volumes:
+  postgres:
+  raw:

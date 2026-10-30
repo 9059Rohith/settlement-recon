@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:8011",
+  "health": true,
+  "database_ready": true,
+  "openapi": true,
+  "auth_denied": true,
+  "non_ascii_auth_denied": true,
+  "idempotent_replay": true,
+  "exact_match_with_fee": true,
+  "quarantine": true,
+  "archive_verified": true,
+  "metrics": true,
+  "synthetic_payment_id": "smoke-b690212f8ed14de79994dd1965121936"
+}

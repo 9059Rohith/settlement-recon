@@ -1,0 +1,18 @@
+groups:
+  - name: settlement-recon
+    rules:
+      - alert: ReconciliationAPIUnavailable
+        expr: up{job="settlement-recon"} == 0
+        for: 2m
+        annotations:
+          summary: Reconciliation API cannot be scraped
+          runbook_url: https://github.com/9059Rohith/settlement-recon/blob/main/docs/runbook.md
+      - alert: ReconciliationQuarantine
+        expr: increase(settlement_recon_batches_total{outcome="quarantined"}[5m]) > 0
+        annotations:
+          summary: An input batch was quarantined; inspect the receipt before replay
+      - alert: ReconciliationServerErrors
+        expr: sum(rate(settlement_recon_http_requests_total{status=~"5.."}[5m])) > 0.1
+        for: 2m
+        annotations:
+          summary: Reconciliation API is returning server errors

@@ -1,0 +1,24 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_ingestion_has_constant_query_count_not_per_row _____________
+
+tmp_path = WindowsPath('C:/Users/BhaviChasvi/AppData/Local/Temp/pytest-of-BhaviChasvi/pytest-1758/test_ingestion_has_constant_qu0')
+
+    def test_ingestion_has_constant_query_count_not_per_row(tmp_path):
+        service = Reconciler(f"sqlite:///{tmp_path / 'test.db'}", FileArchive(tmp_path / "raw"))
+        statements = []
+        def observed(_connection, _cursor, sql, _parameters, _context, _executemany):
+            statements.append(sql)
+        event.listen(service.engine, "before_cursor_execute", observed)
+        body = json.dumps({"payments": [{"payment_id": f"p-{i}", "currency": "USD", "amount": "1"}
+                                        for i in range(200)]}).encode()
+        assert service.ingest("payments", "budget-test", body)["accepted_rows"] == 200
+>       assert len(statements) <= 8, len(statements)
+E       AssertionError: 603
+E       assert 603 <= 8
+E        +  where 603 = len(['BEGIN IMMEDIATE', 'SELECT ingestion_batches.id, ingestion_batches.kind, ingestion_batches.source, ingestion_batches...._id, payments.currency, payments.amount_minor, payments.batch_id \nFROM payments \nWHERE payments.payment_id = ?', ...])
+
+tests\test_query_budget.py:17: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_query_budget.py::test_ingestion_has_constant_query_count_not_per_row
+1 failed in 3.77s
