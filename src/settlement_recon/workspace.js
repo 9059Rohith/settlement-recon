@@ -38,7 +38,7 @@ async function api(path, options = {}) {
 
   }
 
-  if (!r.ok) throw Error(d.detail || "Service request failed");
+  if (!r.ok) { const wait=r.headers.get("Retry-After"); const err=Error((typeof d.detail === "string" ? d.detail : "Service request failed") + (wait ? ` Retry in ${wait} seconds.` : "")); err.retryAfter=Number(wait)||0; throw err; }
 
   return d;
 
@@ -51,6 +51,14 @@ function show(id, data) {
   if (!el) return;
 
   el.replaceChildren();
+  if (id === "#answer" && typeof data.answer === "string") {
+    const heading=document.createElement("h2"), answer=document.createElement("p"), meta=document.createElement("p");
+    heading.textContent="Investigation findings"; answer.textContent=data.answer; answer.style.whiteSpace="pre-wrap"; answer.style.overflowWrap="anywhere";
+    meta.textContent=`${data.provider} · ${data.model} · ${(data.tools || []).length} evidence tools`;
+    el.append(heading,answer,meta);
+    for (const tool of data.tools || []) { const detail=document.createElement("details"), summary=document.createElement("summary"), evidence=document.createElement("pre"); summary.textContent=tool.name; evidence.textContent=JSON.stringify(tool.evidence,null,2); detail.append(summary,evidence); el.append(detail); }
+    return;
+  }
 
   const pre = document.createElement("pre");
 
@@ -468,7 +476,7 @@ if ($("#agent"))
 
         "#answer",
 
-        await api("/workspace/api/agent", {
+        await api("/workspace/api/agent/demo", {
 
           method: "POST",
 
@@ -489,10 +497,11 @@ if ($("#agent"))
     } catch (err) {
 
       notice(err.message);
+      if (err.retryAfter) { let remaining=err.retryAfter; btn.dataset.cooldown="true"; const tick=setInterval(()=>{remaining--; btn.textContent=`Retry in ${remaining}s`; if(remaining<=0){clearInterval(tick); delete btn.dataset.cooldown; btn.disabled=false; btn.textContent="Start bounded investigation";}},1000); }
 
     } finally {
 
-      btn.disabled = false;
+      btn.disabled = btn.dataset.cooldown === "true";
 
     }
 

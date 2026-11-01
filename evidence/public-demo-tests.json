@@ -1,0 +1,25 @@
+{
+  "verified_at": "2026-11-01T19:02:09.009281+00:00",
+  "full_suite": {
+    "passed": 159,
+    "skipped": 6,
+    "skip_scope": "Local PostgreSQL/MinIO services stopped during this run"
+  },
+  "focused_suite": {
+    "passed": 30
+  },
+  "checks": [
+    "atomic concurrency: eight independent clients cannot exceed two starts per minute",
+    "persisted per-client and daily budgets",
+    "storage errors fail closed",
+    "anonymous evidence tool loop",
+    "cross-origin and oversized questions rejected",
+    "private routes remain401"
+  ],
+  "static_checks": [
+    "Ruff",
+    "format",
+    "JavaScript syntax",
+    "Bandit public_demo module clean"
+  ]
+}

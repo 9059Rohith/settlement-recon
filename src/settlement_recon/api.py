@@ -297,7 +297,7 @@ def create_app(
     install_forensics(app, authenticate)
     from settlement_recon.workspace import install
 
-    install(app, service, authenticate, writer)
+    install(app, service, authenticate, writer, demo_secret=token)
     return app
 
 

@@ -13,9 +13,9 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 import httpx
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, MetaData, String, Table, Text, select
 
 PAGES = {
@@ -163,7 +163,15 @@ def convert(data, amount, source, target):
     }
 
 
-def install(app, service, authenticate, writer):
+class PublicQuestion(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    question: str = Field(min_length=5, max_length=600)
+
+
+def install(app, service, authenticate, writer, demo_secret=""):
+    from settlement_recon.public_demo import DemoBudget, client_identity, same_origin
+
+    demo_budget = DemoBudget(service.engine, demo_secret)
 
     from settlement_recon.domain import batches, payment_table, settlements
     from settlement_recon.schema import initialize_schema
@@ -325,6 +333,12 @@ def install(app, service, authenticate, writer):
             "ai_provider": provider["name"],
             "ai_model": provider["model"] or None,
             "ai_data_scope": "Public reference rates and integration metadata only",
+            "public_demo": True,
+            "demo_limiter_storage": service.engine.dialect.name,
+            "demo_client_identity": "vercel-forwarded"
+            if os.getenv("VERCEL") == "1"
+            else "socket-peer",
+            "demo_limits": "3 investigations per client / 10-minute window; 2 global / minute; 30 global / UTC day",
             "rate_provider": SOURCE,
             "reference_data": latest()["status"],
             "payment_source": "Operator-supplied JSON/CSV; no live bank connection configured",
@@ -396,6 +410,7 @@ def install(app, service, authenticate, writer):
                         raise HTTPException(
                             429,
                             "AI free-tier quota reached; retry later. No paid fallback is enabled.",
+                            headers={"Retry-After": "60"},
                         )
 
                     response.raise_for_status()
@@ -446,6 +461,14 @@ def install(app, service, authenticate, writer):
 
         raise HTTPException(502, "Agent reached its bounded investigation limit")
 
+    @app.post("/workspace/api/agent/demo")
+    def recruiter_agent(body: PublicQuestion, request: Request):
+        same_origin(request)
+        if not os.getenv("GEMINI_API_KEY", "").strip():
+            raise HTTPException(503, "Free AI provider is unavailable; no paid fallback is enabled")
+        demo_budget.consume(client_identity(request))
+        return agent(Question(question=body.question))
+
     @app.get("/workspace/assets/app.js", include_in_schema=False)
     def script():
 
@@ -482,11 +505,11 @@ def render(page="overview"):
         "ingest": '<h2>Ingest a source file</h2><form id="ingest"><label>Record type<select name="kind"><option value="payments">Payment JSON</option><option value="statement">Bank statement CSV</option></select></label><label>Source identifier<input name="source" required maxlength="87"></label><label>Actual source file<input name="file" type="file" accept=".json,.csv" required></label><p>Maximum 2 MB. Upload requires writer access. Original bytes are archived and checksummed before processing.</p><button>Validate and ingest</button></form><div id="receipt"></div>',
         "batches": '<h2>Ingestion receipts</h2><p>Accepted, rejected and replayed inputs retain traceable receipts. Select Verify to recompute archive integrity.</p><div id="batches"></div>',
         "provenance": '<h2>Observation provenance</h2><p>The digest identifies the canonical provider response. Capture time and observation date are separate fields.</p><div id="provenance"></div>',
-        "agent": '<h2>Investigate with evidence</h2><p>The assistant can inspect reference observations and integration state. It cannot execute payments or change infrastructure. Model access requires a configured provider and operator authentication.</p><p id="agent-provider" role="status">Checking provider configuration…</p><form id="agent"><label>Investigation question<textarea name="question" minlength="5" maxlength="2000" required></textarea></label><button>Start bounded investigation</button></form><div id="answer"></div>',
+        "agent": '<h2>Investigate with evidence</h2><p>The assistant can inspect reference observations and integration state. It cannot execute payments or change infrastructure. Recruiter demo: no sign-in or operator token required. Ask only about public reference data; never enter private information. Google unpaid-service data terms apply.</p><p id="agent-provider" role="status">Checking provider configuration…</p><p>Free demo: 3 investigations per client per 10-minute window, 2 globally per minute and 30 globally per UTC day. A cooldown is shown when a limit is reached.</p><form id="agent"><label>Investigation question<textarea name="question" minlength="5" maxlength="600" placeholder="Inspect reference_rates and service_status. Cite the observation date, source and whether a bank feed is connected." required></textarea></label><button>Start bounded investigation</button></form><div id="answer"></div>',
         "operations": '<div class="toolbar"><h2>Runtime checks</h2><button id="readiness">Check database and archive</button></div><div id="ready"></div><h2>Integration boundary</h2><div id="status"></div><p>Authentication is held only in this page’s memory and is cleared on navigation. API documentation describes protected write operations.</p><a href="/docs">Open API documentation →</a>',
     }[page]
 
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title} | Settlement Recon</title><style>{CSS}</style></head><body data-page="{page}"><aside><a class="brand" href="/workspace/overview"><b>SR</b> Settlement Recon</a><p class="navlabel">OPERATIONS WORKSPACE</p><nav aria-label="Workspace">{nav}</nav><footer>Financial data, with a chain of evidence.<br><a href="https://github.com/9059Rohith/settlement-recon">Source repository ↗</a></footer></aside><main><header><span>Settlement operations / {html.escape(title)}</span><button id="connect">Connect operator</button></header><section class="heading"><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></section><div id="notice" role="status" aria-live="polite"></div><article>{content}</article><footer>Public views contain reference data only. Customer records require authorization.</footer></main><dialog id="session"><form id="session-form"><h2>Operator session</h2><p>Enter an existing reader or writer token. It is sent only to this application and held in page memory.</p><label>Bearer token<input name="token" type="password" minlength="32" autocomplete="off" required></label><button>Connect</button><button type="button" id="close-session">Cancel</button></form></dialog><script src="/workspace/assets/app.js" defer></script></body></html>'''
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title} | Settlement Recon</title><style>{CSS}</style></head><body data-page="{page}"><aside><a class="brand" href="/workspace/overview"><b>SR</b> Settlement Recon</a><p class="navlabel">OPERATIONS WORKSPACE</p><nav aria-label="Workspace">{nav}</nav><footer>Financial data, with a chain of evidence.<br><a href="https://github.com/9059Rohith/settlement-recon">Source repository ↗</a></footer></aside><main><header><span>Settlement operations / {html.escape(title)}</span><button id="connect">{"Operator access (optional)" if page == "agent" else "Connect operator"}</button></header><section class="heading"><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></section><div id="notice" role="status" aria-live="polite"></div><article>{content}</article><footer>Public views contain reference data only. Customer records require authorization.</footer></main><dialog id="session"><form id="session-form"><h2>Operator session</h2><p>Enter an existing reader or writer token. It is sent only to this application and held in page memory.</p><label>Bearer token<input name="token" type="password" minlength="32" autocomplete="off" required></label><button>Connect</button><button type="button" id="close-session">Cancel</button></form></dialog><script src="/workspace/assets/app.js" defer></script></body></html>'''
 
 
 CSS = Path(__file__).with_name("workspace.css").read_text(encoding="utf-8")

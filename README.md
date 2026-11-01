@@ -333,3 +333,33 @@ actual hosted HTTP 200 response, and `evidence/gemini-browser.png` plus the sani
 DOM transcript verify the operator UI workflow. Unit tests
 cover provider routing, thought-signature roundtrips, key non-disclosure and quota errors.
 Use the existing operator token on the Investigation agent page to run an investigation.
+
+
+## Token-free recruiter AI demo
+
+[Open the public investigator](https://rohith-settlement-recon.vercel.app/workspace/agent).
+The default form calls `POST /workspace/api/agent/demo` without operator credentials.
+Only the actual captured public FX observation and non-secret integration status are
+available to this read-only Gemini investigation. Ledger records, uploads, refreshes,
+reconciliation and the original operator endpoint retain their authorization checks.
+Do not enter private information: unpaid Gemini service data-use terms apply.
+
+Public budgets use atomic conditional upserts in the existing PostgreSQL database:
+three investigations per client per fixed 10-minute window, two global starts per
+minute, and thirty global starts per UTC day. Counters survive restarts and workers;
+SQLite is supported for local tests only. Production fails closed if persistent
+budget storage is unavailable. Rejected budgets return `429` and `Retry-After`
+before inference. Accepted attempts count even if the upstream provider fails.
+IP identities are HMACed with the existing server secret, never stored as raw IPs;
+expired counters are pruned after one day. Only a configured Vercel deployment trusts
+Vercel's overwritten forwarding header. Direct local servers use their socket peer.
+Explicit foreign browser origins are rejected. Free quotas are finite and shared
+with the other portfolio apps, and no paid fallback is used for the demo.
+
+Public requests permit only a 5–600 character question; unknown request fields are
+rejected. The model has a 900-token output cap per turn, three model rounds, and
+at most four fixed evidence calls per round. Tests cover anonymous tool execution,
+parallel budget consumption, persistent cooldowns, global daily limits, spoofed
+forwarding headers, blocked private operations, input validation and fail-closed
+storage errors. Runtime answers are provider-generated; unit-test responses are
+isolated test fixtures.
