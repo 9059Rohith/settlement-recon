@@ -2,9 +2,9 @@
 
 **Explain payment mismatches. Investigate allocation ambiguity. Preserve the evidence.**
 
-A Python and SQL reconciliation service for synthetic cross-border payments. It joins payment events with bank statements, accounts for fees in exact currency minor units, and explains why a payment is matched, partial, missing, overpaid or orphaned. Every accepted or quarantined batch retains its original input checksum.
+A Python and SQL reconciliation workspace for operator-supplied payment records and traceable public currency reference data. It joins payment events with bank statements, accounts for fees in exact currency minor units, and explains why a payment is matched, partial, missing, overpaid or orphaned. Every accepted or quarantined batch retains its original input checksum.
 
-[Live console](https://rohith-settlement-recon.vercel.app/demo) · [API documentation](https://rohith-settlement-recon.vercel.app/docs) · [Live JSON](https://rohith-settlement-recon.vercel.app/demo/summary) · [Readiness](https://rohith-settlement-recon.vercel.app/readyz) · [Verification](VERIFICATION.md)
+[Live console](https://rohith-settlement-recon.vercel.app/demo) · [API documentation](https://rohith-settlement-recon.vercel.app/docs) · [Reference-rate provenance](https://rohith-settlement-recon.vercel.app/workspace/provenance) · [Readiness](https://rohith-settlement-recon.vercel.app/readyz) · [Verification](VERIFICATION.md)
 
 **Stack:** Python · FastAPI · SQLAlchemy · PostgreSQL · Airflow integration · S3-compatible archival · Docker · Terraform · Prometheus
 
@@ -12,7 +12,7 @@ A Python and SQL reconciliation service for synthetic cross-border payments. It 
 
 A payment API returning success does not prove the money was settled correctly. Statements can arrive late, split one payment across several rows, deduct fees, repeat a previously delivered file, or contain a conflicting identifier. A useful reconciliation system must distinguish those cases and preserve enough evidence to investigate them.
 
-Settlement Recon treats **correctness, provenance and recovery** as the product. The public deployment runs the actual Docker backend against durable PostgreSQL on Vercel Hobby and Neon Free. Its public view uses a fixed synthetic fixture; operator APIs remain authenticated.
+Settlement Recon treats **correctness, provenance and recovery** as the product. The public deployment runs the actual Docker backend against durable PostgreSQL on Vercel Hobby and Neon Free. Its public workspace uses captured live reference data; financial records remain authenticated. Legacy synthetic fixtures are disabled in production.
 
 ## Five capabilities worth reviewing
 
@@ -251,3 +251,45 @@ Original implementation informed by [PostgreSQL snapshot isolation](https://www.
 The new explanation route also passed [protected public HTTPS checks](evidence/review-public-feature.json), including exact partial totals, valid source receipts, denied anonymous access, bounded input and its typed OpenAPI response.
 
 Current signature release: [actual protected HTTPS checks](evidence/signature-public-feature.json), [all-severity runtime scan](evidence/signature-image-scan.json), and [measured code changes](evidence/signature-code-metrics.json). Application, test and operational-script lines are counted separately; documentation, comments and docstrings are excluded.
+
+
+## Multipage operations workspace
+
+Twelve dedicated pages are available under `/workspace/`: overview, rates, converter,
+payments, settlements, reconciliation, exceptions, ingest, batches, provenance, agent,
+and operations. The navy/blue ledger interface is responsive, keyboard navigable,
+and renders provider and source values through safe text nodes.
+
+The public rate integration calls `https://api.frankfurter.dev/v1/latest`, validates
+currency codes and finite positive decimal observations, stores the canonical payload
+with SHA256 and a separate capture timestamp in PostgreSQL, and supports exact
+cross-rate calculations. These are reference observations, not executable bank prices.
+Provider refresh is writer-only, bounded by a timeout and a one-minute worker cooldown.
+An outage returns a failure and retains the previous dated observation.
+
+Financial workflows accept actual operator JSON/CSV through the existing authenticated,
+replay-safe ingestion engine. The UI supports file-size checks, quarantine receipts,
+reconciliation, separate ledger/settlement tables, and archive verification. Old synthetic
+source rows remain isolated from workspace views; no real bank account is connected.
+Tokens are held only in page memory; navigation intentionally ends that page session.
+
+The investigation agent implements a genuine bounded OpenAI function-calling loop
+with two allowlisted read-only evidence tools, a maximum of three rounds and four calls
+per round, and explicit upstream errors. It requires server-only `OPENAI_API_KEY` and
+`OPENAI_MODEL`; production currently has neither, so model execution returns 503.
+No generated answer is substituted when the provider is unavailable.
+
+### Current verification and limits
+
+The local suite passed 150 tests with six explicit PostgreSQL/S3 skips before the final
+UI-only checks; final evidence records the latest run. `tests/test_workspace.py` covers
+all twelve pages, auth boundaries, exact conversion, provider payload validation,
+provenance persistence and refresh cooldown. Controlled responses in tests are isolated
+test fixtures, never runtime fallback data. Dependency audit and live HTTP evidence are
+stored in `evidence/`. Existing AWS Terraform and Airflow files remain integration
+configurations; this release does not provision AWS or run a live scheduler.
+
+For an OpenFX interview, demonstrate a real source upload, its immutable batch receipt,
+a replay returning the same result, an invalid file being quarantined, and the difference
+between source observation time and ingestion time. Explain which operations require a
+writer and why reference prices must never be presented as settlement proof.

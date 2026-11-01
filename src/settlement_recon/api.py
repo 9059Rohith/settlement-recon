@@ -135,8 +135,9 @@ def create_app(
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         if request.url.path not in {"/docs", "/redoc"}:
             response.headers["Content-Security-Policy"] = (
-                "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
-                "base-uri 'none'; form-action 'none'"
+                "default-src 'none'; script-src 'self'; connect-src 'self'; "
+                "style-src 'unsafe-inline'; frame-ancestors 'none'; "
+                "base-uri 'none'; form-action 'self'"
             )
         # No payloads, URLs, credentials or database strings in operational logs.
         logger.info(
@@ -164,17 +165,17 @@ def create_app(
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
     def landing():
-        return """<!doctype html><html lang='en'><meta charset='utf-8'>
-        <meta name='viewport' content='width=device-width,initial-scale=1'>
-        <title>Settlement Recon</title><body><main><h1>Settlement Recon</h1>
-        <p>Auditable payment ingestion, exact reconciliation and controlled replay.</p>
-        <p>Use the interactive API console to upload synthetic JSON and CSV, inspect
-        batches, verify archived inputs and query reconciliation exceptions.</p>
-        <p><a href='/demo'>Live synthetic reconciliation</a> ·
-        <a href='/docs'>Open API console</a> · <a href='/healthz'>Health</a> ·
-        <a href='/readyz'>Readiness</a></p>
-        <p>Business data requires an operator token. This system processes synthetic
-        portfolio data and does not initiate or move money.</p></main></body></html>"""
+        from settlement_recon.workspace import render
+
+        return render()
+
+    if not public_demo:
+
+        @app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
+        def workspace_entry():
+            from settlement_recon.workspace import render
+
+            return render()
 
     if public_demo:
         from settlement_recon.demo import summary
@@ -294,6 +295,9 @@ def create_app(
         return extract_case(service.engine, payment_id, source)
 
     install_forensics(app, authenticate)
+    from settlement_recon.workspace import install
+
+    install(app, service, authenticate, writer)
     return app
 
 
