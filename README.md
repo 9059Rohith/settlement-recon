@@ -293,3 +293,16 @@ For an OpenFX interview, demonstrate a real source upload, its immutable batch r
 a replay returning the same result, an invalid file being quarantined, and the difference
 between source observation time and ingestion time. Explain which operations require a
 writer and why reference prices must never be presented as settlement proof.
+
+
+### Final service-backed verification
+
+After starting the installed Docker runtime, the complete suite passed **157 tests with
+zero skips** against local PostgreSQL and encrypted MinIO S3-compatible storage
+(`evidence/workspace-integration-tests.txt`). This includes concurrent replay, exact
+reconciliation, archived-byte verification, schema startup locking, PostgreSQL evidence
+extraction, and all workspace regression cases. The earlier skipped-service run remains
+as dated intermediate evidence and is superseded by this final service-backed run.
+No hosted application database was used for destructive tests. AI model execution is
+still unverified without provider credentials; live financial ingestion needs an actual
+authorized input source. Public views contain captured FX observations only.
