@@ -1,0 +1,48 @@
+{
+  "verified_at": "2026-11-01T19:06:53.172815+00:00",
+  "url": "https://rohith-settlement-recon.vercel.app/workspace/api/agent/demo",
+  "checks": [
+    {
+      "http_status": 200,
+      "retry_after": null,
+      "seconds": 5.35,
+      "result": {
+        "answer": "The bank feed is not connected, as evidenced by the service status indicating that there is \"no live bank connection configured\" and payment sources are limited to operator-supplied JSON or CSV data.",
+        "tools": [
+          {
+            "name": "service_status",
+            "evidence": {
+              "model_configured": true,
+              "ai_provider": "Google Gemini free tier",
+              "ai_model": "gemini-3.5-flash-lite",
+              "ai_data_scope": "Public reference rates and integration metadata only",
+              "public_demo": true,
+              "demo_limiter_storage": "postgresql",
+              "demo_client_identity": "vercel-forwarded",
+              "demo_limits": "3 investigations per client / 10-minute window; 2 global / minute; 30 global / UTC day",
+              "rate_provider": "https://api.frankfurter.dev/v1/latest",
+              "reference_data": "captured",
+              "payment_source": "Operator-supplied JSON/CSV; no live bank connection configured",
+              "cloud": "See deployment evidence; AWS provisioning is separate",
+              "agent_scope": "Read-only evidence tools, max three model rounds; no transfer or execution tools"
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini free tier"
+      },
+      "authorization_sent": false
+    },
+    {
+      "http_status": 429,
+      "retry_after": "7",
+      "seconds": 1.52,
+      "result": {
+        "detail": "Free recruiter demo limit reached. Please retry after the cooldown."
+      },
+      "authorization_sent": false
+    }
+  ],
+  "prior_actual_investigations": 2,
+  "no_counter_reset_or_auth_bypass": true
+}

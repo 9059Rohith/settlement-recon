@@ -1,0 +1,25 @@
+{
+  "verified_at": "2026-11-01T19:07:28.730212+00:00",
+  "url": "https://rohith-settlement-recon.vercel.app/workspace/agent",
+  "method": "Fresh IAB tab, no operator session, fillquestion, submitform, readactualmodelanswer",
+  "authentication_used": false,
+  "model": "gemini-3.5-flash-lite",
+  "tools": [
+    "reference_rates",
+    "service_status"
+  ],
+  "verified_answer": {
+    "EURUSD": "1.1172",
+    "observation_date": "2026-10-30",
+    "bank_feed": "not connected",
+    "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69"
+  },
+  "console_errors_or_warnings": 0,
+  "framework_overlay": false,
+  "screenshot": "public-demo-browser.png",
+  "viewport": "default desktop IAB",
+  "other_viewports": "not rerun for this access-only release",
+  "rate_limit_verified": "public-demo-live-rate-limit.json",
+  "provider_keys_exposed": false,
+  "deployment": "dpl_EULruWgE69Sm93qWc4ifchx1jPzY"
+}

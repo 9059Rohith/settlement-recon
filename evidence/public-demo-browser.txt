@@ -1,0 +1,80 @@
+- complementary:
+  - link "SR Settlement Recon":
+    - /url: /workspace/overview
+    - generic: SR
+    - text: Settlement Recon
+  - paragraph: OPERATIONS WORKSPACE
+  - navigation "Workspace":
+    - link "01 Operations overview":
+      - /url: /workspace/overview
+      - text: "01"
+      - generic: Operations overview
+    - link "02 Reference rates":
+      - /url: /workspace/rates
+      - text: "02"
+      - generic: Reference rates
+    - link "03 Currency analysis":
+      - /url: /workspace/converter
+      - text: "03"
+      - generic: Currency analysis
+    - link "04 Payment ledger":
+      - /url: /workspace/payments
+      - text: "04"
+      - generic: Payment ledger
+    - link "05 Settlement evidence":
+      - /url: /workspace/settlements
+      - text: "05"
+      - generic: Settlement evidence
+    - link "06 Reconciliation":
+      - /url: /workspace/reconciliation
+      - text: "06"
+      - generic: Reconciliation
+    - link "07 Exception queue":
+      - /url: /workspace/exceptions
+      - text: "07"
+      - generic: Exception queue
+    - link "08 Source ingestion":
+      - /url: /workspace/ingest
+      - text: "08"
+      - generic: Source ingestion
+    - link "09 Batch receipts":
+      - /url: /workspace/batches
+      - text: "09"
+      - generic: Batch receipts
+    - link "10 Source provenance":
+      - /url: /workspace/provenance
+      - text: "10"
+      - generic: Source provenance
+    - link "11 Investigation agent":
+      - /url: /workspace/agent
+      - text: "11"
+      - generic: Investigation agent
+    - link "12 Service operations":
+      - /url: /workspace/operations
+      - text: "12"
+      - generic: Service operations
+  - text: Financial data, with a chain of evidence.
+  - link "Source repository ↗":
+    - /url: https://github.com/9059Rohith/settlement-recon
+- main:
+  - generic: Settlement operations / Investigation agent
+  - button "Operator access (optional)"
+  - heading "Investigation agent" [level=1]
+  - paragraph: A bounded, read-only assistant using evidence tools and a real model provider.
+  - status: Investigation complete
+  - article:
+    - heading "Investigate with evidence" [level=2]
+    - paragraph: "The assistant can inspect reference observations and integration state. It cannot execute payments or change infrastructure. Recruiter demo: no sign-in or operator token required. Ask only about public reference data; never enter private information. Google unpaid-service data terms apply."
+    - status: Google Gemini free tier · gemini-3.5-flash-lite · public evidence only
+    - paragraph: "Free demo: 3 investigations per client per 10-minute window, 2 globally per minute and 30 globally per UTC day. A cooldown is shown when a limit is reached."
+    - text: Investigation question
+    - textbox "Investigation question":
+      - /placeholder: Inspect reference_rates and service_status. Cite the observation date, source and whether a bank feed is connected.
+      - text: Inspect reference_rates and service_status. Report the observed EUR/USD quote, observation date, source digest and bank-feed connection status. Cite only evidence.
+    - button "Start bounded investigation"
+    - heading "Investigation findings" [level=2]
+    - paragraph: "Based on the inspected evidence: * **EUR/USD quote:** 1.1172 (USD per 1 EUR) * **Observation date:** 2026-10-30 (captured at `2026-11-01T18:13:31.266028+00:00`) * **Source digest:** `51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69` * **Bank-feed connection status:** No live bank connection configured (\"Operator-supplied JSON/CSV; no live bank connection configured\")"
+    - paragraph: Google Gemini free tier · gemini-3.5-flash-lite · 2 evidence tools
+    - generic "reference_rates"
+    - generic "service_status"
+  - generic: Public views contain reference data only. Customer records require authorization.
