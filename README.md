@@ -285,8 +285,8 @@ model; private financial rows are outside its tool allowlist.
 
 ### Current verification and limits
 
-The local suite passed 150 tests with six explicit PostgreSQL/S3 skips before the final
-UI-only checks; final evidence records the latest run. `tests/test_workspace.py` covers
+The Gemini integration suite passed 153 tests with six explicit PostgreSQL/S3 skips
+while the local integration services were stopped; dated evidence records each run. `tests/test_workspace.py` covers
 all twelve pages, auth boundaries, exact conversion, provider payload validation,
 provenance persistence and refresh cooldown. Controlled responses in tests are isolated
 test fixtures, never runtime fallback data. Dependency audit and live HTTP evidence are
@@ -301,12 +301,13 @@ writer and why reference prices must never be presented as settlement proof.
 
 ### Final service-backed verification
 
-After starting the installed Docker runtime, the complete suite passed **157 tests with
-zero skips** against local PostgreSQL and encrypted MinIO S3-compatible storage
+Before the Gemini provider addition, the complete suite passed **157 tests with
+zero skips** after starting the installed Docker runtime against local PostgreSQL and encrypted MinIO S3-compatible storage
 (`evidence/workspace-integration-tests.txt`). This includes concurrent replay, exact
 reconciliation, archived-byte verification, schema startup locking, PostgreSQL evidence
 extraction, and all workspace regression cases. The earlier skipped-service run remains
-as dated intermediate evidence and is superseded by this final service-backed run.
+as dated intermediate evidence. The newer Gemini tests were run separately; a skipped
+service test is not evidence that the service was exercised in that newer run.
 No hosted application database was used for destructive tests. The previously missing AI credentials have since been resolved through the verified
 Gemini free-tier integration below; live financial ingestion still needs an actual
 authorized input source. Public views contain captured FX observations only.
@@ -327,6 +328,8 @@ agent's automatic tools expose only public FX data and non-secret integration st
 Live verification asks the model to call `reference_rates` and `service_status`, then
 checks its returned observation date, EUR/USD quote, source digest and bank-feed status
 against the actual persisted snapshot. `evidence/gemini-live-local.json` records the
-real provider-backed tool loop; hosted verification is recorded separately. Unit tests
+real provider-backed tool loop. `evidence/gemini-live-production.json` records the
+actual hosted HTTP 200 response, and `evidence/gemini-browser.png` plus the sanitized
+DOM transcript verify the operator UI workflow. Unit tests
 cover provider routing, thought-signature roundtrips, key non-disclosure and quota errors.
 Use the existing operator token on the Investigation agent page to run an investigation.
