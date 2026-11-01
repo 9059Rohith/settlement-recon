@@ -363,3 +363,16 @@ parallel budget consumption, persistent cooldowns, global daily limits, spoofed
 forwarding headers, blocked private operations, input validation and fail-closed
 storage errors. Runtime answers are provider-generated; unit-test responses are
 isolated test fixtures.
+
+
+## Evidence-first product interface
+
+The twelve-page workspace has a new financial design system, a live reference-market
+view, searchable/sortable observations, source-inspection drawers, exact currency
+conversion, keyboard page navigation and a safely formatted public AI investigation
+workspace. All displayed market values come from the real captured source; protected
+financial records are never filled with synthetic portfolio metrics.
+
+[Design and interaction decisions](docs/ui-redesign.md). Manrope is bundled under
+its included SIL Open Font License, so the UI does not depend on a third-party font
+request. The financial API, authentication and public AI quota policy remain intact.

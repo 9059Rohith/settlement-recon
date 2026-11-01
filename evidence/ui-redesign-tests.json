@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-11-01T20:11:22.331245+00:00",
+  "python": {
+    "passed": 161,
+    "skipped": 6,
+    "skips": "PostgreSQL/MinIO services not started for this UI change"
+  },
+  "javascript": {
+    "decimal_precision_tests": 1,
+    "syntax": "passed",
+    "formatter": "Prettier3.6.2"
+  },
+  "ruff": "passed",
+  "bandit_ui_module": "clean",
+  "browser_local": {
+    "real_source": "Retained public FX observation copied with original date and digest",
+    "workflow": "CurrencysearchINR\u2192sourcedrawer\u2192calculator\u2192actual1000EUR=106084INR",
+    "keyboard_search": "Reference rates selected and navigated byEnter",
+    "sort": "NumericascendingfirstGBP0.8338",
+    "mobile390": "No horizontal document overflow; menu opens after layoutsettles",
+    "default_viewport": [
+      1280,
+      720
+    ]
+  },
+  "paid_provider_or_private_auth_changes": false
+}

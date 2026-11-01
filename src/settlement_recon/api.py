@@ -136,7 +136,7 @@ def create_app(
         if request.url.path not in {"/docs", "/redoc"}:
             response.headers["Content-Security-Policy"] = (
                 "default-src 'none'; script-src 'self'; connect-src 'self'; "
-                "style-src 'unsafe-inline'; frame-ancestors 'none'; "
+                "style-src 'unsafe-inline'; font-src 'self'; frame-ancestors 'none'; "
                 "base-uri 'none'; form-action 'self'"
             )
         # No payloads, URLs, credentials or database strings in operational logs.
