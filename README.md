@@ -269,7 +269,7 @@ An outage returns a failure and retains the previous dated observation.
 
 Financial workflows accept actual operator JSON/CSV through the existing authenticated,
 replay-safe ingestion engine. The UI supports file-size checks, quarantine receipts,
-reconciliation, separate ledger/settlement tables, and archive verification. Old synthetic
+reconciliation, separate ledger/settlement tables, and archive verification. Legacy sources are excluded through an explicit `operator:` source namespace; new workspace uploads use that namespace. Old synthetic
 source rows remain isolated from workspace views; no real bank account is connected.
 Tokens are held only in page memory; navigation intentionally ends that page session.
 

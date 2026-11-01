@@ -193,7 +193,7 @@ def install(app, service, authenticate, writer):
         query = (
             select(payment_table)
             .join(batches, payment_table.c.batch_id == batches.c.id)
-            .where(batches.c.source != "portfolio-synthetic-v1")
+            .where(batches.c.source.startswith("operator:"))
             .limit(200)
         )
         with service.engine.connect() as connection:
@@ -201,11 +201,26 @@ def install(app, service, authenticate, writer):
 
     @app.get("/workspace/api/settlements", dependencies=[Depends(authenticate)])
     def settlement_rows():
-        query = (
-            select(settlements).where(settlements.c.source != "portfolio-synthetic-v1").limit(200)
-        )
+        query = select(settlements).where(settlements.c.source.startswith("operator:")).limit(200)
         with service.engine.connect() as connection:
             return [dict(row) for row in connection.execute(query).mappings()]
+
+    @app.get("/workspace/api/reconciliation", dependencies=[Depends(authenticate)])
+    def matching_results():
+        identities = {row["payment_id"] for row in payments()}
+        identities.update(row["payment_id"] for row in settlement_rows())
+        return service.reconcile(payment_ids=identities) if identities else []
+
+    @app.get("/workspace/api/batches", dependencies=[Depends(authenticate)])
+    def workspace_batches():
+        query = (
+            select(batches)
+            .where(batches.c.source.startswith("operator:"))
+            .order_by(batches.c.created_at.desc())
+            .limit(200)
+        )
+        with service.engine.connect() as connection:
+            return [service._batch(row) for row in connection.execute(query).mappings()]
 
     @app.get("/workspace/api/rates")
     def rates():
@@ -337,7 +352,7 @@ def render(page="overview"):
         "settlements": '<h2>Expected and settled amounts</h2><p>Amounts are represented in currency minor units. Synthetic fixture identifiers are excluded from this workspace.</p><div id="ledger"></div>',
         "reconciliation": '<div class="toolbar"><h2>Matching results</h2><button id="reconcile">Run reconciliation</button></div><div id="ledger"></div>',
         "exceptions": '<h2>Unmatched and partial payments</h2><p>Only records requiring investigation appear here.</p><div id="ledger"></div>',
-        "ingest": '<h2>Ingest a source file</h2><form id="ingest"><label>Record type<select name="kind"><option value="payments">Payment JSON</option><option value="statement">Bank statement CSV</option></select></label><label>Source identifier<input name="source" required maxlength="96"></label><label>Actual source file<input name="file" type="file" accept=".json,.csv" required></label><p>Maximum 2 MB. Upload requires writer access. Original bytes are archived and checksummed before processing.</p><button>Validate and ingest</button></form><div id="receipt"></div>',
+        "ingest": '<h2>Ingest a source file</h2><form id="ingest"><label>Record type<select name="kind"><option value="payments">Payment JSON</option><option value="statement">Bank statement CSV</option></select></label><label>Source identifier<input name="source" required maxlength="87"></label><label>Actual source file<input name="file" type="file" accept=".json,.csv" required></label><p>Maximum 2 MB. Upload requires writer access. Original bytes are archived and checksummed before processing.</p><button>Validate and ingest</button></form><div id="receipt"></div>',
         "batches": '<h2>Ingestion receipts</h2><p>Accepted, rejected and replayed inputs retain traceable receipts. Select Verify to recompute archive integrity.</p><div id="batches"></div>',
         "provenance": '<h2>Observation provenance</h2><p>The digest identifies the canonical provider response. Capture time and observation date are separate fields.</p><div id="provenance"></div>',
         "agent": '<h2>Investigate with evidence</h2><p>The assistant can inspect reference observations and integration state. It cannot execute payments or change infrastructure. Model access requires a configured provider and operator authentication.</p><form id="agent"><label>Investigation question<textarea name="question" minlength="5" maxlength="2000" required></textarea></label><button>Start bounded investigation</button></form><div id="answer"></div>',

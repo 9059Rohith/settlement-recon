@@ -2,19 +2,20 @@
   {
     "path": "/workspace/api/payments",
     "status": 200,
-    "result": [
-      {
-        "payment_id": "release-6a40aad98d8744899f894f98da69f5ff",
-        "currency": "USD",
-        "amount_minor": 1000,
-        "batch_id": "196c351d-988b-494c-a645-bf6acc4d4b32"
-      }
-    ]
+    "result": {
+      "record_count": 1,
+      "redacted": true,
+      "note": "Legacy source records were discovered and are now excluded by the operator source namespace."
+    }
   },
   {
     "path": "/workspace/api/settlements",
     "status": 200,
-    "result": []
+    "result": {
+      "record_count": 0,
+      "redacted": true,
+      "note": "Legacy source records were discovered and are now excluded by the operator source namespace."
+    }
   },
   {
     "path": "/workspace/api/agent",

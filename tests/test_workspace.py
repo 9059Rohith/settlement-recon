@@ -76,6 +76,31 @@ def test_cross_rate_uses_exact_decimals():
     assert Decimal(result["result"]) == Decimal("6.4")
 
 
+def test_operator_workspace_excludes_legacy_verification_records(app):
+    import json
+
+    for source, identity in [
+        ("release-check", "legacy-check"),
+        ("operator:ledger", "actual-input"),
+    ]:
+        app.state.service.ingest(
+            "payments",
+            source,
+            json.dumps(
+                {"payments": [{"payment_id": identity, "currency": "USD", "amount": "12.50"}]}
+            ).encode(),
+        )
+    with TestClient(app) as client:
+        headers = {"Authorization": f"Bearer {TOKEN}"}
+        for path in ["payments", "reconciliation"]:
+            response = client.get("/workspace/api/" + path, headers=headers)
+            assert response.status_code == 200
+            assert [row["payment_id"] for row in response.json()] == ["actual-input"]
+        receipts = client.get("/workspace/api/batches", headers=headers).json()
+        assert len(receipts) == 1
+        assert receipts[0]["source"] == "operator:ledger"
+
+
 def test_provider_payload_validation():
     with pytest.raises(ValueError):
         validate_rates({"base": "USD", "rates": {}})

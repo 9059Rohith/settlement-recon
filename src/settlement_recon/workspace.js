@@ -68,7 +68,7 @@ async function ledger() {
       ? "/workspace/api/payments"
       : page === "settlements"
         ? "/workspace/api/settlements"
-        : "/v1/reconciliation";
+        : "/workspace/api/reconciliation";
   const rows = await api(path);
   table(
     "#ledger",
@@ -112,7 +112,7 @@ async function load() {
         table("#batches", []);
         return;
       }
-      const rows = (await api("/v1/batches")).filter(
+      const rows = (await api("/workspace/api/batches")).filter(
         (r) => r.source !== "portfolio-synthetic-v1",
       );
       table("#batches", rows);
@@ -208,7 +208,7 @@ if ($("#ingest"))
           "/v1/ingest/" +
             encodeURIComponent(d.get("kind")) +
             "?source=" +
-            encodeURIComponent(d.get("source")),
+            encodeURIComponent("operator:" + d.get("source")),
           {
             method: "POST",
             headers: {

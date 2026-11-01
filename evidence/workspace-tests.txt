@@ -1,6 +1,6 @@
-........................................................................ [ 46%]
-.........................s..........ssss.....................s.......... [ 92%]
-............                                                             [100%]
+........................................................................ [ 45%]
+.........................s..........ssss.....................s.......... [ 91%]
+.............                                                            [100%]
 ============================== warnings summary ===============================
 .venv\Lib\site-packages\fastapi\testclient.py:1
   C:\Users\BhaviChasvi\Downloads\cyber_projects\settlement-recon\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
@@ -14,4 +14,4 @@ SKIPPED [1] tests\test_postgres.py:40: Set TEST_DATABASE_URL
 SKIPPED [1] tests\test_postgres.py:54: Set TEST_DATABASE_URL
 SKIPPED [1] tests\test_postgres.py:80: Set TEST_DATABASE_URL
 SKIPPED [1] tests\test_s3_integration.py:12: Set TEST_S3_ENDPOINT for real S3-compatible service
-150 passed, 6 skipped, 1 warning in 29.54s
+151 passed, 6 skipped, 1 warning in 27.77s
