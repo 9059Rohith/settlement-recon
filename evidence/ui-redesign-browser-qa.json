@@ -1,0 +1,57 @@
+{
+  "verified_at": "2026-11-01T20:35:08.348593+00:00",
+  "runtime_commit": "9456799528b0",
+  "deployment": "dpl_5PUhg3V3kJ9N73VyNZsDfoPmqxbE",
+  "canonical": "https://rohith-settlement-recon.vercel.app",
+  "desktop": {
+    "all_twelve_navigation_views": "passed; distinct h1; width equals scrollWidth",
+    "source_workflow": "INR actual observation106.084 -> source drawer with full digest -> calculator1000EUR ->106084.000INR",
+    "search_sort_keyboard": "local real-source preview passed numeric ascending and page search Enter"
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "client_width": 375,
+    "scroll_width": 375,
+    "navigation": "open and Escape close; focus restored to nav-toggle"
+  },
+  "actual_public_ai": {
+    "question": "stored EUR/INR rate, date and bank-feed status",
+    "provider": "Gemini3.5FlashLite",
+    "tools": 2,
+    "answer": "106.084; observed2026-10-30; actual source digest; no live bank feed",
+    "operator_token_used": false
+  },
+  "console_errors_warnings": [],
+  "tests": {
+    "python_passed": 161,
+    "optional_services_skipped": 6,
+    "node_passed": 3,
+    "ruff": "passed45formattedfiles",
+    "bandit_new_ui_module": "clean"
+  },
+  "fidelity_review": {
+    "method": "Generated concept before implementation, view_image comparison and actual browser desktop/mobile captures",
+    "comparisons": [
+      "White/cool-gray/cobalt palette and navy evidence rail retained",
+      "Geometric Manrope headings and tabular monetary values retained",
+      "Sidebar/header and table/evidence two-column composition retained",
+      "Exact real source statistics replace decorative metrics",
+      "Outline SVG and native dialog workflows implemented; one-column mobile nav adapts intentionally"
+    ],
+    "deviations": [
+      "Concept has larger reference dimensions1505x1045; final browser1280x720 and390x844",
+      "Source rail uses direct labels rather than redundant decorative icons",
+      "Native-size screenshot tool returned cropped height; final default-size and mobile captures are the fidelity evidence"
+    ],
+    "percentile_ranking": "not asserted"
+  },
+  "limits": [
+    "No live bank feed; operator-provided financial records remain protected",
+    "Public AI shares persistent free-tier quotas; no counters reset",
+    "Optional PostgreSQL/MinIO services not started in this UI-only verification",
+    "Starlette emits existing httpx TestClient deprecation warning"
+  ]
+}

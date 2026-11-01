@@ -25,3 +25,17 @@ Compare sidebar/header geometry, type hierarchy, white/cool-gray/cobalt palette,
 Functional verification includes the source → inspection → EUR/INR calculator workflow, page-search keyboard selection, numeric sorting, mobile navigation and default/390px containment. Asset/accessibility regression tests cover all twelve pages, CSP and the bundled font; Node tests cover exact formatting beyond 53-bit integer precision. Local preview uses an actual copied public observation with its original timestamp and digest, never fabricated portfolio metrics.
 
 No objective percentile ranking is claimed. Production source data, privacy boundaries, free provider quotas and protected workflow limitations remain visible.
+
+
+## Verified production release
+
+Runtime commit `9456799`, deployment `dpl_5PUhg3V3kJ9N73VyNZsDfoPmqxbE`, Ready at https://rohith-settlement-recon.vercel.app. Final screenshots are linked below. [Machine-readable browser QA](../evidence/ui-redesign-browser-qa.json) and [19 production HTTP checks](../evidence/ui-redesign-public-http.json) include deployed asset byte matching, original source data, protected API401 and oversized-agent-input422 without provider inference.
+
+The production browser completed all twelve navigation views, actual INR source inspection to exact1000EUR=106084.000INR, anonymous Gemini with two evidence tools, and390px responsive containment. Mobile navigation closes with Escape and restores focus. The final console had no errors/warnings. The final local suite reports161passed,6optional PostgreSQL/MinIO skips;3Node tests passed; Ruff45files clean/formatted. An existing Starlette/httpx test-client deprecation warning remains.
+
+![Public desktop](design/settlement-desktop-live-final.jpg)
+![Public mobile](design/settlement-mobile-live-final.jpg)
+![Exact source-driven conversion](design/settlement-calculator-live-final.jpg)
+![Actual anonymous AI investigation](design/settlement-agent-live-final.jpg)
+
+Fidelity review compared palette, type hierarchy, sidebar/header, metric/table anatomy and dark evidence rail. The reference is1505x1045; actual final browser evidence is1280x720 and390x844. The native-size screenshot tool clipped height, so default-size/mobile captures are used; no pixel-perfect or percentile ranking is claimed. Source labels are intentionally simpler than reference decoration. Form fields, drawers and dialogues are implemented native controls, not screenshot overlays.

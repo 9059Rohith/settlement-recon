@@ -1,0 +1,166 @@
+{
+  "verified_at": "2026-11-01T20:34:39.391556+00:00",
+  "deployment": "dpl_5PUhg3V3kJ9N73VyNZsDfoPmqxbE",
+  "runtime_commit": "9456799",
+  "checks": [
+    {
+      "path": "/workspace/overview",
+      "status": 200,
+      "bytes": 48895,
+      "sha256": "74ab18392556eeb757a2982d5fdd14ac6bf41ed2970535f456ac2d51eda9df45"
+    },
+    {
+      "path": "/workspace/rates",
+      "status": 200,
+      "bytes": 46070,
+      "sha256": "179d9e08b731ddb823628b06deaeb86d1089b3241e1b9045c80dc285c645c90e"
+    },
+    {
+      "path": "/workspace/converter",
+      "status": 200,
+      "bytes": 47446,
+      "sha256": "3f0655baa9640beffc8b27afef2d5505d69e44e14e57ac382c71de03a6c677a3"
+    },
+    {
+      "path": "/workspace/payments",
+      "status": 200,
+      "bytes": 46888,
+      "sha256": "e593e5d7ba171192aa876464d282da528be4c1b8fb0011cf3dbe4685c89820b4"
+    },
+    {
+      "path": "/workspace/settlements",
+      "status": 200,
+      "bytes": 46925,
+      "sha256": "1663dfc234b9f0d80fb6e8468ab7f9666b1302c8d46df7ec0bb8f909aaa086c1"
+    },
+    {
+      "path": "/workspace/reconciliation",
+      "status": 200,
+      "bytes": 47022,
+      "sha256": "326c035576d797393964d366e8b5c2eab9b270967489a294771de202b10714fa"
+    },
+    {
+      "path": "/workspace/exceptions",
+      "status": 200,
+      "bytes": 46908,
+      "sha256": "221548a7ef4fb426f685e0f14ddb5e7564d9ae5ba0ed0977a21d9fd8e00931f6"
+    },
+    {
+      "path": "/workspace/ingest",
+      "status": 200,
+      "bytes": 46668,
+      "sha256": "391d494b1d8cb8a894c2b6313ca1b50ae9b77f8f3f24a4a9f630e3a2f6cdcfe1"
+    },
+    {
+      "path": "/workspace/batches",
+      "status": 200,
+      "bytes": 45963,
+      "sha256": "e30d50c34ddbb8096055d77aa95fde26d615c30b0f630f9a4ab2f736578c02e3"
+    },
+    {
+      "path": "/workspace/provenance",
+      "status": 200,
+      "bytes": 45800,
+      "sha256": "1e5127f30657eccf22e705bed44c86a48f8833db728b46841408372163718b0b"
+    },
+    {
+      "path": "/workspace/agent",
+      "status": 200,
+      "bytes": 47492,
+      "sha256": "bebd7306c78eae2ff42228455df834464e8bddefc93e9de2bcc61ee4a383f148"
+    },
+    {
+      "path": "/workspace/operations",
+      "status": 200,
+      "bytes": 45821,
+      "sha256": "7ec0cabf3758c76ef56376aee027378b70178f08ebffa8fdd064e20c98bd9dda"
+    },
+    {
+      "path": "/workspace/assets/app.js",
+      "status": 200,
+      "bytes": 26780,
+      "sha256": "cedd88b776135d5c90d6223161cb12e317e5f7f25d978f3e39dbca81e8546593"
+    },
+    {
+      "path": "/workspace/assets/format.js",
+      "status": 200,
+      "bytes": 1712,
+      "sha256": "043287d0749723001eae1bd96ded137f817c8d2a07832d02570d2a7811319f7a"
+    },
+    {
+      "path": "/workspace/assets/manrope.ttf",
+      "status": 200,
+      "bytes": 164700,
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+    },
+    {
+      "path": "/readyz",
+      "status": 200,
+      "bytes": 18,
+      "sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+    },
+    {
+      "path": "/workspace/api/rates",
+      "status": 200,
+      "bytes": 839,
+      "sha256": "7af0c0cb97161273f20188d07998c7153df9e1f0676044bef6712de4e543859d"
+    },
+    {
+      "path": "/workspace/api/payments",
+      "status": 401,
+      "bytes": 34,
+      "sha256": "235692d45f3ef12ab8fbd7a533bda9ddd10cdd5ff680e99c35c973e77ec64bfa"
+    },
+    {
+      "path": "/workspace/api/agent/demo",
+      "status": 422,
+      "bytes": 752,
+      "sha256": "58363a283c6345e86da7e36f59fde6ae94aca838da1a1b4908d9dc8926461cb1"
+    }
+  ],
+  "source": {
+    "status": "captured",
+    "source": "https://api.frankfurter.dev/v1/latest",
+    "attribution": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+    "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+    "captured_at": "2026-11-01T18:13:31.266028+00:00",
+    "observation": {
+      "amount": 1.0,
+      "base": "EUR",
+      "date": "2026-10-30",
+      "rates": {
+        "AUD": 1.5904,
+        "BRL": 6.0692,
+        "CAD": 1.5606,
+        "CHF": 0.9194,
+        "CNY": 7.4326,
+        "CZK": 24.353,
+        "DKK": 7.4735,
+        "GBP": 0.8338,
+        "HKD": 8.7652,
+        "HUF": 366.33,
+        "IDR": 20275.17,
+        "ILS": 3.495,
+        "INR": 106.084,
+        "ISK": 136.0,
+        "JPY": 175.68,
+        "KRW": 1491.76,
+        "MXN": 21.1237,
+        "MYR": 4.5325,
+        "NOK": 10.312,
+        "NZD": 1.9823,
+        "PHP": 71.143,
+        "PLN": 4.4038,
+        "RON": 5.3447,
+        "SEK": 10.978,
+        "SGD": 1.4282,
+        "THB": 37.683,
+        "TRY": 55.8015,
+        "USD": 1.1172,
+        "ZAR": 18.6455
+      }
+    },
+    "purpose": "Reference rates are not executable transaction prices."
+  },
+  "provider_calls_during_http_test": 0
+}

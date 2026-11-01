@@ -6,7 +6,12 @@
     "skips": "PostgreSQL/MinIO services not started for this UI change"
   },
   "javascript": {
-    "decimal_precision_tests": 1,
+    "passed": 3,
+    "coverage": [
+      "exact decimal formatting",
+      "nested bold/code tokens",
+      "inert untrusted markup"
+    ],
     "syntax": "passed",
     "formatter": "Prettier3.6.2"
   },
