@@ -1,0 +1,40 @@
+[
+  {
+    "path": "/workspace/api/payments",
+    "status": 200,
+    "result": [
+      {
+        "payment_id": "release-6a40aad98d8744899f894f98da69f5ff",
+        "currency": "USD",
+        "amount_minor": 1000,
+        "batch_id": "196c351d-988b-494c-a645-bf6acc4d4b32"
+      }
+    ]
+  },
+  {
+    "path": "/workspace/api/settlements",
+    "status": 200,
+    "result": []
+  },
+  {
+    "path": "/workspace/api/agent",
+    "status": 503,
+    "result": {
+      "detail": "Model provider unavailable: configure server-side OPENAI_API_KEY and OPENAI_MODEL"
+    }
+  },
+  {
+    "path": "/workspace/api/convert",
+    "status": 200,
+    "result": {
+      "amount": "100",
+      "source": "EUR",
+      "target": "USD",
+      "cross_rate": "1.1172",
+      "result": "111.7200",
+      "observation_date": "2026-10-30",
+      "purpose": "reference analysis only",
+      "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69"
+    }
+  }
+]
