@@ -1,0 +1,22 @@
+{
+  "/readyz": {
+    "status": 200,
+    "state": "ready",
+    "model_configured": null
+  },
+  "/workspace/api/rates": {
+    "status": 200,
+    "state": "captured",
+    "model_configured": null
+  },
+  "/workspace/api/status": {
+    "status": 200,
+    "state": null,
+    "model_configured": false
+  },
+  "exact_source_bytes": {
+    "verified": true
+  },
+  "deployment": "dpl_FzBCcMG2h52p3dURN7F5QkRAMYRS",
+  "application_commit": "ea6fec8"
+}
