@@ -1,0 +1,22 @@
+[
+  {
+    "path": "payments",
+    "status": 200,
+    "record_count": 0
+  },
+  {
+    "path": "settlements",
+    "status": 200,
+    "record_count": 0
+  },
+  {
+    "path": "reconciliation",
+    "status": 200,
+    "record_count": 0
+  },
+  {
+    "path": "batches",
+    "status": 200,
+    "record_count": 0
+  }
+]
