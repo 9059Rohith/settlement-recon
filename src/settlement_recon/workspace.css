@@ -176,13 +176,13 @@ button.primary:hover,
 .sidebar nav a {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 11px;
   color: #59677f;
-  font-size: 13px;
-  padding: 11px 13px;
+  font-size: 12.5px;
+  padding: 10px 11px;
   border-radius: 6px;
   line-height: 1.4;
-  min-height: 41px;
+  min-height: 40px;
 }
 .sidebar nav a svg {
   width: 19px;
