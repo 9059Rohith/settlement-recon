@@ -195,7 +195,7 @@ button.primary:hover,
 }
 .sidebar nav a[aria-current] {
   background: #dceaff;
-  color: var(--blue);
+  color: #004daf;
   font-weight: 750;
 }
 .sidebar-footer {
@@ -252,7 +252,7 @@ button.primary:hover,
 }
 .command-trigger {
   padding: 8px 10px;
-  color: #8994a7;
+  color: #5e6d85;
   font-size: 12px;
   font-weight: 450;
   min-width: 214px;
@@ -266,7 +266,7 @@ button.primary:hover,
   border: 1px solid #e0e5ed;
   padding: 1px 5px;
   border-radius: 3px;
-  color: #63718b;
+  color: #52627d;
   font-size: 10px;
 }
 #nav-toggle {
@@ -512,7 +512,7 @@ table {
 }
 th {
   text-align: left;
-  color: #7a87a0;
+  color: #5e6d85;
   font-weight: 600;
   background: #f5f8fc;
   padding: 11px 12px;
@@ -554,7 +554,7 @@ tbody tr:hover {
 }
 .currency-name {
   font-size: 11px;
-  color: #6c7c95;
+  color: #5e6d85;
 }
 .flag {
   display: grid;
@@ -664,14 +664,14 @@ tbody tr:hover {
   justify-content: space-between;
   gap: 14px;
   font-size: 10px;
-  color: #8290a5;
+  color: #5e6d85;
   padding: 19px 0 25px;
 }
 .page-footer > a {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #6b7e9b;
+  color: #596d89;
   white-space: nowrap;
 }
 form {
@@ -700,7 +700,7 @@ textarea {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #9aa6b9;
+  color: #697a93;
 }
 textarea {
   min-height: 157px;
@@ -1073,7 +1073,7 @@ select {
 .answer-meta {
   font-size: 10px !important;
   margin: 18px 0 !important;
-  color: #7b8ca4 !important;
+  color: #5c6e89 !important;
 }
 .evidence-heading {
   font-size: 12px;
@@ -1722,5 +1722,15 @@ dialog p {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar .icon-button,
+  #close-command,
+  #close-detail,
+  #close-session {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
