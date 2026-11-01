@@ -215,7 +215,7 @@ if ($("#ingest"))
               "Content-Type":
                 d.get("kind") === "payments" ? "application/json" : "text/csv",
             },
-            body: await f.text(),
+            body: f,
           },
         ),
       );
