@@ -1,0 +1,86 @@
+{
+  "pages": [
+    {
+      "page": "overview",
+      "status": 200,
+      "html": true,
+      "milliseconds": 735.5
+    },
+    {
+      "page": "rates",
+      "status": 200,
+      "html": true,
+      "milliseconds": 842.8
+    },
+    {
+      "page": "converter",
+      "status": 200,
+      "html": true,
+      "milliseconds": 735.0
+    },
+    {
+      "page": "payments",
+      "status": 200,
+      "html": true,
+      "milliseconds": 393.7
+    },
+    {
+      "page": "settlements",
+      "status": 200,
+      "html": true,
+      "milliseconds": 546.9
+    },
+    {
+      "page": "reconciliation",
+      "status": 200,
+      "html": true,
+      "milliseconds": 387.3
+    },
+    {
+      "page": "exceptions",
+      "status": 200,
+      "html": true,
+      "milliseconds": 562.4
+    },
+    {
+      "page": "ingest",
+      "status": 200,
+      "html": true,
+      "milliseconds": 449.1
+    },
+    {
+      "page": "batches",
+      "status": 200,
+      "html": true,
+      "milliseconds": 683.8
+    },
+    {
+      "page": "provenance",
+      "status": 200,
+      "html": true,
+      "milliseconds": 1517.0
+    },
+    {
+      "page": "agent",
+      "status": 200,
+      "html": true,
+      "milliseconds": 1512.4
+    },
+    {
+      "page": "operations",
+      "status": 200,
+      "html": true,
+      "milliseconds": 507.8
+    }
+  ],
+  "page_count": 12,
+  "captured_currencies": 29,
+  "observation_date": "2026-10-30",
+  "source": "https://api.frankfurter.dev/v1/latest",
+  "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+  "limitations": [
+    "No model provider configured",
+    "No live bank feed connected",
+    "Six local PostgreSQL/S3 test cases skipped"
+  ]
+}
