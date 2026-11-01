@@ -105,21 +105,22 @@ function safeLink(label, href) {
   }
 }
 function inlineText(parent, value) {
-  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https:\/\/[^\s)]+\))/g;
-  let last = 0;
-  for (const match of value.matchAll(pattern)) {
-    parent.append(document.createTextNode(value.slice(last, match.index)));
-    const t = match[0];
-    if (t.startsWith("**")) parent.append(node("strong", "", t.slice(2, -2)));
-    else if (t.startsWith("`")) parent.append(node("code", "", t.slice(1, -1)));
-    else {
-      const end = t.indexOf("](");
-      parent.append(safeLink(t.slice(1, end), t.slice(end + 2, -1)));
+  function appendTokens(destination, tokens) {
+    for (const token of tokens) {
+      if (token.type === "strong") {
+        const strong = node("strong");
+        appendTokens(strong, token.children);
+        destination.append(strong);
+      } else if (token.type === "code")
+        destination.append(node("code", "", token.value));
+      else if (token.type === "link")
+        destination.append(safeLink(token.value, token.href));
+      else destination.append(document.createTextNode(token.value));
     }
-    last = match.index + t.length;
   }
-  parent.append(document.createTextNode(value.slice(last)));
+  appendTokens(parent, ReconFormat.inlineTokens(value));
 }
+
 function prose(text) {
   const el = node("div", "answer-prose");
   let list = null;

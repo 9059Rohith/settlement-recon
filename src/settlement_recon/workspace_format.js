@@ -9,7 +9,37 @@
     const trimmed = fraction.replace(/0+$/, "");
     return grouped + (trimmed ? "." + trimmed : "");
   }
-  const api = Object.freeze({ formatExactDecimal });
+  function inlineTokens(value) {
+    const text = String(value).slice(0, 20000);
+    const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https:\/\/[^\s)]+\))/g;
+    const tokens = [];
+    let last = 0;
+    for (const match of text.matchAll(pattern)) {
+      if (match.index > last)
+        tokens.push({ type: "text", value: text.slice(last, match.index) });
+      const token = match[0];
+      if (token.startsWith("**"))
+        tokens.push({
+          type: "strong",
+          children: inlineTokens(token.slice(2, -2)),
+        });
+      else if (token.startsWith("`"))
+        tokens.push({ type: "code", value: token.slice(1, -1) });
+      else {
+        const split = token.indexOf("](");
+        tokens.push({
+          type: "link",
+          value: token.slice(1, split),
+          href: token.slice(split + 2, -1),
+        });
+      }
+      last = match.index + token.length;
+    }
+    if (last < text.length)
+      tokens.push({ type: "text", value: text.slice(last) });
+    return tokens;
+  }
+  const api = Object.freeze({ formatExactDecimal, inlineTokens });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.ReconFormat = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);

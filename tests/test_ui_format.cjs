@@ -2,6 +2,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const {
   formatExactDecimal,
+  inlineTokens,
 } = require("../src/settlement_recon/workspace_format.js");
 
 test("large financial results retain all digits, including values beyond Number precision", () => {
@@ -16,4 +17,17 @@ test("large financial results retain all digits, including values beyond Number 
   );
   assert.equal(formatExactDecimal("-1234.50"), "-1,234.5");
   assert.equal(formatExactDecimal("0.000"), "0");
+});
+
+test("bold source identifiers retain their nested code formatting", () => {
+  assert.deepEqual(inlineTokens("Read **`EUR/USD`** evidence"), [
+    { type: "text", value: "Read " },
+    { type: "strong", children: [{ type: "code", value: "EUR/USD" }] },
+    { type: "text", value: " evidence" },
+  ]);
+});
+
+test("untrusted markup and javascript links stay inert text tokens", () => {
+  const text = "<img src=x onerror=alert(1)> [source](javascript:alert(1))";
+  assert.deepEqual(inlineTokens(text), [{ type: "text", value: text }]);
 });
