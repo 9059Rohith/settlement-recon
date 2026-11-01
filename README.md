@@ -273,11 +273,15 @@ reconciliation, separate ledger/settlement tables, and archive verification. Leg
 source rows remain isolated from workspace views; no real bank account is connected.
 Tokens are held only in page memory; navigation intentionally ends that page session.
 
-The investigation agent implements a genuine bounded OpenAI function-calling loop
+The investigation agent implements a genuine bounded provider function-calling loop
 with two allowlisted read-only evidence tools, a maximum of three rounds and four calls
-per round, and explicit upstream errors. It requires server-only `OPENAI_API_KEY` and
-`OPENAI_MODEL`; production currently has neither, so model execution returns 503.
-No generated answer is substituted when the provider is unavailable.
+per round, and explicit upstream errors. Production uses Google Gemini 3.5 Flash-Lite through a server-only `GEMINI_API_KEY`,
+restricted to the Generative Language API in a dedicated Google project with billing
+disabled. It never falls back to a paid provider. The original OpenAI adapter remains
+available only when Gemini is not configured. Missing credentials and exhausted
+free-tier quota return explicit errors. No generated answer is substituted.
+Only public reference observations and integration metadata are exposed to the
+model; private financial rows are outside its tool allowlist.
 
 ### Current verification and limits
 
@@ -303,6 +307,26 @@ zero skips** against local PostgreSQL and encrypted MinIO S3-compatible storage
 reconciliation, archived-byte verification, schema startup locking, PostgreSQL evidence
 extraction, and all workspace regression cases. The earlier skipped-service run remains
 as dated intermediate evidence and is superseded by this final service-backed run.
-No hosted application database was used for destructive tests. AI model execution is
-still unverified without provider credentials; live financial ingestion needs an actual
+No hosted application database was used for destructive tests. The previously missing AI credentials have since been resolved through the verified
+Gemini free-tier integration below; live financial ingestion still needs an actual
 authorized input source. Public views contain captured FX observations only.
+
+
+## Live AI provider integration
+
+Google Gemini `gemini-3.5-flash-lite` is the current live model. Its chat-completions
+adapter preserves opaque provider tool-call metadata across turns, requires evidence
+tool use before answering, validates tool names and arguments, and allows at most
+three model rounds. Outputs include the actual tool evidence and provider/model name.
+The Google project `rohith-openfx-ai-free-261102` has billing disabled, and each portfolio
+application has a distinct API key restricted to `generativelanguage.googleapis.com`.
+Free-tier quotas are finite and can return 429; no card, paid fallback, Google Search
+or paid grounding tool is configured. Google unpaid API data-use terms apply, so the
+agent's automatic tools expose only public FX data and non-secret integration state.
+
+Live verification asks the model to call `reference_rates` and `service_status`, then
+checks its returned observation date, EUR/USD quote, source digest and bank-feed status
+against the actual persisted snapshot. `evidence/gemini-live-local.json` records the
+real provider-backed tool loop; hosted verification is recorded separately. Unit tests
+cover provider routing, thought-signature roundtrips, key non-disclosure and quota errors.
+Use the existing operator token on the Investigation agent page to run an investigation.

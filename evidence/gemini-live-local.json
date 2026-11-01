@@ -1,0 +1,71 @@
+{
+  "http_status": 200,
+  "result": {
+    "answer": "Based on the latest tool outputs:\n\n* **Observation Date:** 2026-10-30 (Captured at: `2026-11-01T18:13:31.266028+00:00`)\n* **EUR/USD Reference Rate:** 1.1172 (1 EUR = 1.1172 USD)\n* **Source & Digest:** \n  * Source: `https://api.frankfurter.dev/v1/latest` (European Central Bank reference rates)\n  * Digest: `51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69`\n* **Bank-Feed Connection Status:** No live bank connection configured (`\"payment_source\": \"Operator-supplied JSON/CSV; no live bank connection configured\"`).",
+    "tools": [
+      {
+        "name": "reference_rates",
+        "evidence": {
+          "status": "captured",
+          "source": "https://api.frankfurter.dev/v1/latest",
+          "attribution": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+          "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+          "captured_at": "2026-11-01T18:13:31.266028+00:00",
+          "observation": {
+            "amount": 1.0,
+            "base": "EUR",
+            "date": "2026-10-30",
+            "rates": {
+              "AUD": 1.5904,
+              "BRL": 6.0692,
+              "CAD": 1.5606,
+              "CHF": 0.9194,
+              "CNY": 7.4326,
+              "CZK": 24.353,
+              "DKK": 7.4735,
+              "GBP": 0.8338,
+              "HKD": 8.7652,
+              "HUF": 366.33,
+              "IDR": 20275.17,
+              "ILS": 3.495,
+              "INR": 106.084,
+              "ISK": 136.0,
+              "JPY": 175.68,
+              "KRW": 1491.76,
+              "MXN": 21.1237,
+              "MYR": 4.5325,
+              "NOK": 10.312,
+              "NZD": 1.9823,
+              "PHP": 71.143,
+              "PLN": 4.4038,
+              "RON": 5.3447,
+              "SEK": 10.978,
+              "SGD": 1.4282,
+              "THB": 37.683,
+              "TRY": 55.8015,
+              "USD": 1.1172,
+              "ZAR": 18.6455
+            }
+          },
+          "purpose": "Reference rates are not executable transaction prices."
+        }
+      },
+      {
+        "name": "service_status",
+        "evidence": {
+          "model_configured": true,
+          "ai_provider": "Google Gemini free tier",
+          "ai_model": "gemini-3.5-flash-lite",
+          "ai_data_scope": "Public reference rates and integration metadata only",
+          "rate_provider": "https://api.frankfurter.dev/v1/latest",
+          "reference_data": "captured",
+          "payment_source": "Operator-supplied JSON/CSV; no live bank connection configured",
+          "cloud": "See deployment evidence; AWS provisioning is separate",
+          "agent_scope": "Read-only evidence tools, max three model rounds; no transfer or execution tools"
+        }
+      }
+    ],
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Google Gemini free tier"
+  }
+}

@@ -1,0 +1,17 @@
+........................................................................ [ 45%]
+.........................s..........ssss.....................s.......... [ 90%]
+...............                                                          [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\settlement-recon\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_forensics_case.py:111: Real PostgreSQL required
+SKIPPED [1] tests\test_postgres.py:14: Set TEST_DATABASE_URL to real PostgreSQL
+SKIPPED [1] tests\test_postgres.py:40: Set TEST_DATABASE_URL
+SKIPPED [1] tests\test_postgres.py:54: Set TEST_DATABASE_URL
+SKIPPED [1] tests\test_postgres.py:80: Set TEST_DATABASE_URL
+SKIPPED [1] tests\test_s3_integration.py:12: Set TEST_S3_ENDPOINT for real S3-compatible service
+153 passed, 6 skipped, 1 warning in 39.04s

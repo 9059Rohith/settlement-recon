@@ -108,6 +108,91 @@ def test_provider_payload_validation():
         validate_rates({"base": "EUR", "date": "2026-10-30", "rates": {"USD": "NaN"}})
 
 
+def test_gemini_roundtrip_preserves_provider_metadata_and_hides_key(app, monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "unit-test-placeholder-not-a-real-key")
+    requests = []
+    signature = {"google": {"thought_signature": "opaque-test-signature"}}
+
+    class Provider:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            import copy
+
+            requests.append(copy.deepcopy(kwargs["json"]))
+            assert url == "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+            message = {
+                "role": "assistant",
+                "content": "The evidence reports no connected bank feed.",
+            }
+            if len(requests) == 1:
+                message = {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "one",
+                            "type": "function",
+                            "extra_content": signature,
+                            "function": {"name": "service_status", "arguments": "{}"},
+                        }
+                    ],
+                }
+            return httpx.Response(
+                200, json={"choices": [{"message": message}]}, request=httpx.Request("POST", url)
+            )
+
+    with TestClient(app) as client:
+        status = client.get("/workspace/api/status")
+        assert status.json()["ai_model"] == "gemini-3.5-flash-lite"
+        assert "unit-test-placeholder" not in status.text
+        monkeypatch.setattr("settlement_recon.workspace.httpx.Client", Provider)
+        result = client.post(
+            "/workspace/api/agent",
+            json={"question": "Inspect the service status"},
+            headers={"Authorization": f"Bearer {TOKEN}"},
+        )
+        assert result.status_code == 200
+        assert result.json()["tools"][0]["name"] == "service_status"
+        assert requests[0]["tool_choice"] == "required"
+        assert requests[1]["messages"][2]["tool_calls"][0]["extra_content"] == signature
+        assert "unit-test-placeholder" not in result.text
+
+
+def test_gemini_quota_failure_is_explicit_without_paid_fallback(app, monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "unit-test-placeholder-not-a-real-key")
+
+    class Limited:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            return httpx.Response(429, json={"error": "quota"}, request=httpx.Request("POST", url))
+
+    with TestClient(app) as client:
+        monkeypatch.setattr("settlement_recon.workspace.httpx.Client", Limited)
+        response = client.post(
+            "/workspace/api/agent",
+            json={"question": "Inspect rates"},
+            headers={"Authorization": f"Bearer {TOKEN}"},
+        )
+        assert response.status_code == 429
+        assert "No paid fallback" in response.json()["detail"]
+
+
 def test_capture_persists_provenance_and_reuses_digest(app, monkeypatch):
     # Controlled provider response is a test fixture, never a runtime fallback.
     class Provider:
