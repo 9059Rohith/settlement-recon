@@ -1,0 +1,138 @@
+{
+  "verified_at": "2026-11-02T03:35:41.119508+00:00",
+  "runtime_commit": "97e1b1b",
+  "deployment": "dpl_5aTMUJBB1Ls3PxC9ytMjwK9C2tTP",
+  "canonical": "https://rohith-settlement-recon.vercel.app",
+  "checks": [
+    {
+      "path": "/workspace/overview",
+      "status": 200,
+      "sha256": "7c86dbba56ed3b82fe5f7c90f83bc7774444129da70d3083f68bf2c08926eb80"
+    },
+    {
+      "path": "/workspace/rates",
+      "status": 200,
+      "sha256": "e74ced597612d8c2f579b24567cffcc31ef2686d41cdbcf73cc995e1cc109509"
+    },
+    {
+      "path": "/workspace/converter",
+      "status": 200,
+      "sha256": "2b8aba32d11ba84462ef736b0bab84f25b20a96bde038cb0f17b8c8238be6170"
+    },
+    {
+      "path": "/workspace/treasury",
+      "status": 200,
+      "sha256": "71bafd5492ca84061f60a597aec902b2747a963e09401389c8dbf336b05f54d1"
+    },
+    {
+      "path": "/workspace/payments",
+      "status": 200,
+      "sha256": "8ecfea1d9aef5848764e8489bb4aefbba256abe5f788d0959e5678e8061e6b56"
+    },
+    {
+      "path": "/workspace/settlements",
+      "status": 200,
+      "sha256": "b00e7e28383d9cd29c26569f5a74307db56abf96f78b2130c3b2232849a42c72"
+    },
+    {
+      "path": "/workspace/reconciliation",
+      "status": 200,
+      "sha256": "140d91f1953cc5fc1e5e4c3a61ed72fd22e8940c7e68f6a468053bec5238ec2d"
+    },
+    {
+      "path": "/workspace/exceptions",
+      "status": 200,
+      "sha256": "95ac2ee89bfcaabc7156573c99757b77cb69aa9f441e24de8ef4cd76dd45e046"
+    },
+    {
+      "path": "/workspace/ingest",
+      "status": 200,
+      "sha256": "549e6dee1831ad0bb44448b5e66b885766bd72333f3d7b236f0fd4bb8f12cddb"
+    },
+    {
+      "path": "/workspace/batches",
+      "status": 200,
+      "sha256": "d978bacfb58f9ff2be007aec2e0d00626125c8b7e4de7ec36aee518b39713b3a"
+    },
+    {
+      "path": "/workspace/provenance",
+      "status": 200,
+      "sha256": "7241b6e2fe5d046174409d4145658f5a1a7ee5050bae2895eac36049c3a47faf"
+    },
+    {
+      "path": "/workspace/agent",
+      "status": 200,
+      "sha256": "27f893cd7bf5c4231a4ebaf290baab43927b901ebac950918d5d11dba24220f1"
+    },
+    {
+      "path": "/workspace/operations",
+      "status": 200,
+      "sha256": "c83198689e4334dfe4fe7c0a630f66283a10a9bf1dfd565b49839e79e057f3e8"
+    },
+    {
+      "path": "/workspace/assets/app.js",
+      "status": 200,
+      "sha256": "cedd88b776135d5c90d6223161cb12e317e5f7f25d978f3e39dbca81e8546593"
+    },
+    {
+      "path": "/workspace/assets/format.js",
+      "status": 200,
+      "sha256": "05d37fc2755d1c7c4f31cf848b8da1d34b82592f24b3d83de6119917f5ab03e5"
+    },
+    {
+      "path": "/workspace/assets/treasury.js",
+      "status": 200,
+      "sha256": "18c73d8019db942c502b62ed672427d6975fc4421354f519e8224ea815ad4c13"
+    },
+    {
+      "path": "/workspace/api/rates",
+      "status": 200,
+      "sha256": "7af0c0cb97161273f20188d07998c7153df9e1f0676044bef6712de4e543859d"
+    },
+    {
+      "path": "/workspace/api/treasury",
+      "status": 200,
+      "sha256": "fcfcb338b10d4676a1483fa249dab69c9db4a5eff5e66996a35d7941754b1338"
+    },
+    {
+      "path": "/workspace/api/treasury",
+      "status": 200,
+      "sha256": "fcfcb338b10d4676a1483fa249dab69c9db4a5eff5e66996a35d7941754b1338"
+    },
+    {
+      "path": "/workspace/api/treasury",
+      "status": 403,
+      "sha256": "fc17058f91aeb38cdad0edea12ff209c4e10d6dc0cd5caa1097ff4175c10d73d"
+    },
+    {
+      "path": "/workspace/api/treasury",
+      "status": 413,
+      "sha256": "40eec301aa8474624878e97d111c81f3d036ea7223a8d4a6477a74d707a2653c"
+    },
+    {
+      "path": "/workspace/api/treasury",
+      "status": 422,
+      "sha256": "17f49c5148e2eb1e22a5d43ecafb763050f2712d9464848fe7af30c66727c8ff"
+    },
+    {
+      "path": "/workspace/api/payments",
+      "status": 401,
+      "sha256": "235692d45f3ef12ab8fbd7a533bda9ddd10cdd5ff680e99c35c973e77ec64bfa"
+    },
+    {
+      "path": "/workspace/api/rates",
+      "status": 200,
+      "sha256": "7af0c0cb97161273f20188d07998c7153df9e1f0676044bef6712de4e543859d"
+    },
+    {
+      "path": "/workspace/api/status",
+      "status": 200,
+      "sha256": "9de3fbfe149812ad935c6cc57007b85c03929d42becad59f19e45d67f49cc45b"
+    }
+  ],
+  "source_digest_unchanged": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+  "report_hash_repeatable": "fef3a2cae4321d2c08cb9c2e4a365076648964e5530aa79fe6e1a67a8b3fbf07",
+  "model_calls": 0,
+  "assets_match": true,
+  "private_auth_preserved": true
+}

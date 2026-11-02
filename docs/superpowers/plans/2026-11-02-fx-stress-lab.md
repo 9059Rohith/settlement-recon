@@ -13,9 +13,11 @@ Review focus: inverse FX quote direction; offsetting receivables/payables; nonfi
 
 Alternatives: historical VaR is inappropriate with one dated capture; expanding the converter alone would add little engineering depth. Chosen multi-currency gross/net analysis, deterministic shocks, concentration and limit breaches reveals risk without inventing history.
 
-- [ ] Task1 tests/test_treasury.py: hand-derived gross/net and inverse quotes, offsets, scenario deltas, concentration denominator, precision, strict input boundaries, report fingerprint. Run red then implement src/settlement_recon/treasury.py and run green.
-- [ ] Task2 tests/test_treasury_api.py: no-source503, real captured-source analysis200, no table mutation, same-origin rejection, invalid422/private401. Add existing-workspace endpoint and13th page; run full suite.
-- [ ] Task3 existing workspace_ui.py/workspace.js/workspace.css: interactive cash-flow rows, scenarios/shock editor, source date, net-exposure chart/table, exact scenario deltas/limit breaches, downloadable report. Empty state until user provides assumptions. No operational fake defaults.
-- [ ] Task4 bounded benchmark, Ruff/Bandit/JSchecks, review diff, deploy existing freeVercel project, verifypublic endpoint/assets/browserdesktop390/mobileform/result/download. Commit/push evidence and limitations.
+- [x] Task1 tests/test_treasury.py: hand-derived gross/net and inverse quotes, offsets, scenario deltas, concentration denominator, precision, strict input boundaries, report fingerprint. Run red then implement src/settlement_recon/treasury.py and run green.
+- [x] Task2 tests/test_treasury_api.py: no-source503, real captured-source analysis200, no table mutation, same-origin rejection, invalid422/private401. Add existing-workspace endpoint and13th page; run full suite.
+- [x] Task3 existing workspace_ui.py/workspace.js/workspace.css: interactive cash-flow rows, scenarios/shock editor, source date, net-exposure chart/table, exact scenario deltas/limit breaches, downloadable report. Empty state until user provides assumptions. No operational fake defaults.
+- [x] Task4 bounded benchmark, Ruff/Bandit/JSchecks, review diff, deploy existing freeVercel project, verifypublic endpoint/assets/browserdesktop390/mobileform/result/download. Commit/push evidence and limitations.
 
 References: https://docs.moderntreasury.com/ledgers/docs/account-reconciliation (business variance); https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html (rates informational, not transactions). These sources inform scope; the stress engine is our own implementation, not a vendor integration.
+
+Ruling: exact Fraction valuation from decimal inputs replaces early-rounded Decimal cross-rates, eliminating zero-shock recurring-quote residuals. Output alone uses50digitHalfEven. Independentreviewcaughtstale-responseandduplicateJSONkeys;bothfixedwithinputsnapshot/revisionguard/strictparser.
