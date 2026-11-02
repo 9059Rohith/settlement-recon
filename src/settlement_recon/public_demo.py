@@ -39,7 +39,7 @@ def client_identity(request: Request) -> str:
     return candidate
 
 
-def same_origin(request: Request) -> None:
+def same_origin(request: Request, *, max_bytes: int = 4096) -> None:
     origin = request.headers.get("origin")
     allowed = {str(request.base_url).rstrip("/")}
     if os.getenv("VERCEL") == "1":
@@ -52,8 +52,8 @@ def same_origin(request: Request) -> None:
         size = int(request.headers.get("content-length", "0"))
     except ValueError as exc:
         raise HTTPException(400, "Invalid request length") from exc
-    if size > 4096:
-        raise HTTPException(413, "Demo request exceeds 4 KB")
+    if size > max_bytes:
+        raise HTTPException(413, "Demo request exceeds allowed size")
 
 
 class DemoBudget:

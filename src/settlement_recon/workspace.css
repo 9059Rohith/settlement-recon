@@ -1734,3 +1734,250 @@ dialog p {
     min-height: 44px;
   }
 }
+
+/* Treasury risk laboratory: native controls and evidence, no chart library. */
+.stress-intro {
+  max-width: 800px;
+  margin: 0 0 30px;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #0564ff;
+  font-weight: 800;
+}
+.stress-intro h2 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  margin: 12px 0;
+}
+.stress-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+}
+.stress-input {
+  min-width: 0;
+}
+.stress-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+.stress-position {
+  display: grid;
+  grid-template-columns: 28px 90px 120px minmax(100px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 16px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.stress-position label,
+.stress-shock-row label {
+  min-width: 0;
+}
+.stress-position input,
+.stress-position select,
+.stress-shock-row input,
+.stress-shock-row select {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.stress-flow-id {
+  align-self: center;
+  color: #64748b;
+  font-size: 12px;
+}
+.stress-remove {
+  padding: 10px;
+  font-size: 11px;
+  min-height: 42px;
+}
+.stress-scenario {
+  border: 1px solid #dce4ef;
+  border-radius: 8px;
+  margin: 16px 0;
+  padding: 18px;
+  background: #f8faff;
+  min-width: 0;
+}
+.stress-shock-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin: 16px 0;
+}
+.stress-scenario > button {
+  margin: 8px 8px 0 0;
+}
+.stress-submit {
+  margin-top: 26px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stress-submit span {
+  font-size: 11px;
+  color: #475569;
+}
+.stress-method {
+  padding-left: 20px;
+}
+.stress-method li {
+  padding: 10px 0;
+}
+.stress-method p {
+  font-size: 12px;
+}
+.stress-empty {
+  padding: 42px 30px;
+  border: 1px dashed #c6d2e3;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 28px;
+}
+.stress-empty h2 {
+  font-size: 21px;
+}
+#stress-output {
+  display: grid;
+  gap: 24px;
+  margin-top: 32px;
+  min-width: 0;
+}
+#stress-output:empty {
+  display: none;
+}
+#stress-output .metrics-band {
+  margin: 0;
+}
+.stress-number {
+  font-size: 24px !important;
+  overflow-wrap: anywhere;
+}
+.stress-table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.stress-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 540px;
+  margin-top: 20px;
+}
+.stress-table th {
+  font-size: 11px;
+  text-align: left;
+  background: #f3f7fc;
+  color: #475569;
+  padding: 12px;
+}
+.stress-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf1f6;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  max-width: 240px;
+}
+.stress-bars {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.stress-bar {
+  display: grid;
+  grid-template-columns: 45px minmax(0, 1fr) 55px;
+  gap: 16px;
+  align-items: center;
+  font-size: 12px;
+}
+.stress-bar meter {
+  width: 100%;
+  height: 16px;
+  accent-color: #0564ff;
+}
+.stress-bar meter::-webkit-meter-optimum-value {
+  background: #0564ff;
+}
+.stress-contributions {
+  border-top: 1px solid #e2e8f0;
+  padding: 18px 0;
+}
+.stress-contributions summary {
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.stress-evidence code {
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+.stress-evidence p {
+  font-size: 12px;
+}
+@media (max-width: 1150px) {
+  .stress-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stress-layout > .source-rail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .stress-position {
+    grid-template-columns: 24px 85px 115px minmax(110px, 1fr) auto;
+  }
+}
+@media (max-width: 650px) {
+  .stress-intro h2 {
+    font-size: 25px;
+  }
+  .stress-options {
+    grid-template-columns: 1fr;
+  }
+  .stress-position {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stress-flow-id {
+    grid-column: 1/-1;
+  }
+  .stress-position > label:nth-of-type(3) {
+    grid-column: 1/-1;
+  }
+  .stress-position .stress-remove {
+    justify-self: start;
+    min-height: 44px;
+  }
+  .stress-layout > .source-rail {
+    grid-template-columns: 1fr;
+  }
+  .stress-shock-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stress-shock-row button {
+    grid-column: 1/-1;
+    justify-self: start;
+  }
+  .stress-scenario {
+    padding: 14px;
+  }
+  .stress-input .panel-heading {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+  }
+  .stress-bar {
+    gap: 8px;
+  }
+  .stress-submit button {
+    width: 100%;
+    min-height: 44px;
+  }
+  .stress-table-scroll {
+    position: relative;
+  }
+}

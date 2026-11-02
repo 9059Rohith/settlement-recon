@@ -1,0 +1,15 @@
+{
+  "scope": "Local pure engine, controlled assumptions, real captured reference rates; excludes HTTP/DB/network",
+  "positions": 50,
+  "scenarios": 8,
+  "currencies": 29,
+  "iterations": 200,
+  "first_ms": 9.194200014462695,
+  "p50_ms": 6.355550009175204,
+  "p95_ms": 10.123099986230955,
+  "p99_ms": 13.694299996132031,
+  "source_digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+  "report_digest": "e69d529750c18c9caf4179732a93a46aa5719a055dcd3dfd578181bc4f167ee6",
+  "request_digest": "b17005f222268c9bbfca3d9d2f9e2015d9cf0959d5d44a776fb9e44a7b0ece4f",
+  "runtime": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]"
+}

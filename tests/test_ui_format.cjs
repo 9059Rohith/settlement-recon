@@ -3,7 +3,17 @@ const assert = require("node:assert/strict");
 const {
   formatExactDecimal,
   inlineTokens,
+  formatCompactDecimal,
 } = require("../src/settlement_recon/workspace_format.js");
+
+test("compact risk values explicitly truncate without losing integer precision", () => {
+  assert.equal(
+    formatCompactDecimal("20275170000000001.23456789"),
+    "20,275,170,000,000,001.234567…",
+  );
+  assert.equal(formatCompactDecimal("-0.0000000001"), "-0.000000…");
+  assert.equal(formatCompactDecimal("106084.000"), "106,084");
+});
 
 test("large financial results retain all digits, including values beyond Number precision", () => {
   assert.equal(

@@ -39,7 +39,18 @@
       tokens.push({ type: "text", value: text.slice(last) });
     return tokens;
   }
-  const api = Object.freeze({ formatExactDecimal, inlineTokens });
+  function formatCompactDecimal(value) {
+    const formatted = formatExactDecimal(value);
+    const [whole, fraction = ""] = formatted.split(".");
+    return fraction.length > 6
+      ? whole + "." + fraction.slice(0, 6) + "…"
+      : formatted;
+  }
+  const api = Object.freeze({
+    formatExactDecimal,
+    inlineTokens,
+    formatCompactDecimal,
+  });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.ReconFormat = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);

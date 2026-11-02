@@ -30,6 +30,10 @@ PAGES = {
         "Currency analysis",
         "Exact decimal cross-rate calculations using captured observations.",
     ),
+    "treasury": (
+        "FX stress lab",
+        "Value cash-flow assumptions, inspect currency exposure and replay hypothetical shocks.",
+    ),
     "payments": ("Payment ledger", "Inspect authorized payment records and currency amounts."),
     "settlements": (
         "Settlement evidence",
@@ -322,6 +326,33 @@ def install(app, service, authenticate, writer, demo_secret=""):
         except ValueError as error:
             raise HTTPException(422, str(error)) from error
 
+    @app.post("/workspace/api/treasury")
+    async def treasury_analysis(request: Request):
+        from pydantic import ValidationError
+
+        from settlement_recon.treasury import analyze, parse_request
+
+        same_origin(request, max_bytes=32768)
+        raw = bytearray()
+        async for chunk in request.stream():
+            raw.extend(chunk)
+            if len(raw) > 32768:
+                raise HTTPException(413, "Analysis request exceeds 32 KB")
+        try:
+            body = parse_request(raw)
+        except (ValidationError, ValueError, UnicodeError, RecursionError) as error:
+            raise HTTPException(
+                422,
+                "Invalid analysis: use 1-50 unique cash flows, decimal-string amounts, and 1-8 bounded scenarios",
+            ) from error
+        snapshot = latest()
+        if snapshot["status"] != "captured":
+            raise HTTPException(503, "Capture reference rates before analysis")
+        try:
+            return analyze(snapshot, body)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+
     @app.get("/workspace/api/status")
     def status():
 
@@ -486,6 +517,13 @@ def install(app, service, authenticate, writer, demo_secret=""):
     def script():
 
         return Response(JS, media_type="application/javascript")
+
+    @app.get("/workspace/assets/treasury.js", include_in_schema=False)
+    def treasury_script():
+        return Response(
+            Path(__file__).with_name("treasury.js").read_text(encoding="utf-8"),
+            media_type="application/javascript",
+        )
 
     @app.get("/workspace/{page}", response_class=HTMLResponse, include_in_schema=False)
     def page_view(page: str):

@@ -376,3 +376,12 @@ financial records are never filled with synthetic portfolio metrics.
 [Design and interaction decisions](docs/ui-redesign.md). Manrope is bundled under
 its included SIL Open Font License, so the UI does not depend on a third-party font
 request. The financial API, authentication and public AI quota policy remain intact.
+
+
+## New: FX Exposure Stress Lab
+
+[Open the decision lab](https://rohith-settlement-recon.vercel.app/workspace/treasury) · [Method and interview guide](docs/treasury-stress-lab.md)
+
+Move from reference-rate lookup to reproducible treasury analysis:50 visitor-authored cash flows,8 independent scenarios, gross/net currency exposure, exact-rational valuation, per-currency contribution and absolute exposure-limit checks. Captured ECB provenance, typed assumptions and SHA256 report identity travel together in a downloadable artifact. The polished13-page workspace keeps customer records protected. Scenarios are hypothetical, never represented as actual payments, forecasts or VaR.
+
+The new release passed192local Python tests (6optional integration skips) and4Node cases; bounded50-flow/8-scenario analysis measured6.36ms p50 /10.12ms p95 locally, excluding HTTP/DB. See the method for measurement scope and limitations.
