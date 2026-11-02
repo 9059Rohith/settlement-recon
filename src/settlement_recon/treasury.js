@@ -161,7 +161,12 @@
     const body = make("tbody");
     for (const values of rows) {
       const r = make("tr");
-      for (const value of values) r.append(make("td", "", value));
+      for (const value of values) {
+        const isDecimal = typeof value === "string" && /^-?\d+(\.\d+)?$/.test(value);
+        const cell = make("td", "", isDecimal ? ReconFormat.formatCompactDecimal(value) : value);
+        if (isDecimal) cell.title = value;
+        r.append(cell);
+      }
       body.append(r);
     }
     t.append(head, body);
