@@ -1983,7 +1983,13 @@ dialog p {
 }
 
 .history-layout { display:grid; grid-template-columns:minmax(0, 2fr) minmax(0, 1fr); gap:1rem; }
-.history-layout .source-panel a { display:block; margin-top:.65rem; }
+.history-layout .source-panel p { color:#c4d3ea; }
+.history-layout .source-panel a {
+  display:block; width:fit-content; margin-top:.65rem; color:#a9ceff;
+  text-decoration:underline; text-underline-offset:.2em;
+}
+.history-layout .source-panel a:hover { color:#fff; }
+.history-layout .source-panel a:focus-visible { outline:2px solid #a9ceff; outline-offset:4px; }
 #history-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
 #history-form label { display:grid; gap:.35rem; min-width:0; }
 #history-form :is(input, select) { width:100%; min-width:0; }
