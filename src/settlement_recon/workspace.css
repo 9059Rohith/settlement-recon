@@ -1981,3 +1981,18 @@ dialog p {
     position: relative;
   }
 }
+
+.history-layout { display:grid; grid-template-columns:minmax(0, 2fr) minmax(0, 1fr); gap:1rem; }
+.history-layout .source-panel a { display:block; margin-top:.65rem; }
+#history-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+#history-form label { display:grid; gap:.35rem; min-width:0; }
+#history-form :is(input, select) { width:100%; min-width:0; }
+#history-form button { grid-column:1 / -1; justify-self:start; }
+#history-result { margin-top:1rem; }
+#history-result[hidden] { display:none; }
+#history-chart { margin:.85rem 0; background:#f3f7fd; border-radius:12px; }
+#history-chart svg { display:block; width:100%; height:auto; }
+.history-table { max-height:25rem; overflow:auto; }
+.history-table table { min-width:32rem; }
+.history-table th { position:sticky; top:0; background:#f3f7fd; }
+@media (max-width:800px) { .history-layout { grid-template-columns:minmax(0,1fr); } }

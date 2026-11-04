@@ -63,6 +63,20 @@ def test_workspace_cannot_mutate_without_writer(app, monkeypatch):
         assert "demo-matched" not in client.get("/").text
 
 
+def test_history_api_returns_same_archived_observations_to_anonymous_clients(app):
+    with TestClient(app) as client:
+        query = {"source": "USD", "target": "INR", "start": "2025-01-01", "end": "2025-01-07"}
+        response = client.get("/workspace/api/history", params=query)
+        assert response.status_code == 200
+        report = response.json()
+        assert report["observation_count"] == 4
+        assert report["observations"][0]["target_units_per_eur"] == "88.507"
+        assert report == client.get("/workspace/api/history", params=query).json()
+        assert client.get("/workspace/assets/history.js").status_code == 200
+        query["end"] = "2026-02-01"
+        assert client.get("/workspace/api/history", params=query).status_code == 422
+
+
 @pytest.mark.parametrize("value", ["NaN", "Infinity", "-1", "1000000000001", "abc"])
 def test_conversion_rejects_invalid_amounts(value):
     with pytest.raises(ValueError):

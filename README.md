@@ -385,3 +385,7 @@ request. The financial API, authentication and public AI quota policy remain int
 Move from reference-rate lookup to reproducible treasury analysis:50 visitor-authored cash flows,8 independent scenarios, gross/net currency exposure, exact-rational valuation, per-currency contribution and absolute exposure-limit checks. Captured ECB provenance, typed assumptions and SHA256 report identity travel together in a downloadable artifact. The polished13-page workspace keeps customer records protected. Scenarios are hypothetical, never represented as actual payments, forecasts or VaR.
 
 The new release passed192local Python tests (6optional integration skips) and4Node cases; bounded50-flow/8-scenario analysis measured6.36ms p50 /10.12ms p95 locally, excluding HTTP/DB. See the method for measurement scope and limitations.
+
+### Real market replay
+
+[Historical FX replay](https://rohith-settlement-recon.vercel.app/workspace/history) derives exact cross-rates from the original ECB archive. The reproducible benchmark independently verified 54,464 pair observations across 214 windows. See [method and measured results](docs/ecb-replay.md).

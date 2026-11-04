@@ -7,12 +7,12 @@ import json
 import os
 import threading
 import time
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 import httpx
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, MetaData, String, Table, Text, select
@@ -29,6 +29,10 @@ PAGES = {
     "converter": (
         "Currency analysis",
         "Exact decimal cross-rate calculations using captured observations.",
+    ),
+    "history": (
+        "Historical FX replay",
+        "Explore observed currency moves across the European Central Bank reference archive.",
     ),
     "treasury": (
         "FX stress lab",
@@ -524,6 +528,34 @@ def install(app, service, authenticate, writer, demo_secret=""):
             Path(__file__).with_name("treasury.js").read_text(encoding="utf-8"),
             media_type="application/javascript",
         )
+
+    @app.get("/workspace/assets/history.js", include_in_schema=False)
+    def history_script():
+        return Response(
+            Path(__file__).with_name("history.js").read_text(encoding="utf-8"),
+            media_type="application/javascript",
+        )
+
+    @app.get("/workspace/api/history/source")
+    def historical_source():
+        from settlement_recon.history import load_archive
+
+        return load_archive().source()
+
+    @app.get("/workspace/api/history")
+    def historical_replay(
+        start: date,
+        end: date,
+        source: str = Query(pattern=r"^[A-Z]{3}$"),
+        target: str = Query(pattern=r"^[A-Z]{3}$"),
+    ):
+        from settlement_recon.history import load_archive, replay
+
+        archive = load_archive()
+        try:
+            return replay(archive, source, target, start, end)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
 
     @app.get("/workspace/{page}", response_class=HTMLResponse, include_in_schema=False)
     def page_view(page: str):
