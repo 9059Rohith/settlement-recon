@@ -224,7 +224,7 @@ Set `TEST_DATABASE_URL` and the S3-compatible test credentials to execute those 
 
 | Surface | Status | Deliberate boundary |
 |---|---|---|
-| Vercel Docker API + Neon PostgreSQL | Public, verified | Synthetic view; private operations; free quotas and cold starts |
+| Vercel Docker API + Neon PostgreSQL | Public, verified | Published ECB observations, protected financial operations, free quotas and cold starts |
 | Local PostgreSQL + encrypted MinIO | Integration-tested | S3-compatible behavior, not proof of AWS IAM configuration |
 | Airflow DAG | Actual older-runtime import verified; current CI configured | No live scheduler is claimed |
 | AWS ECS / ALB / RDS / S3 / ECR / IAM | Terraform validated; apply not executed | Requires account credentials, certificate, secrets and budget |
