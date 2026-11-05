@@ -1,5 +1,7 @@
 # Settlement Recon
 
+[OpenFX readiness audit](docs/openfx-interview-readiness.md) · [Interview demonstration](docs/interview.md)
+
 **Explain payment mismatches. Investigate allocation ambiguity. Preserve the evidence.**
 
 A Python and SQL reconciliation workspace for operator-supplied payment records and traceable public currency reference data. It joins payment events with bank statements, accounts for fees in exact currency minor units, and explains why a payment is matched, partial, missing, overpaid or orphaned. Every accepted or quarantined batch retains its original input checksum.
