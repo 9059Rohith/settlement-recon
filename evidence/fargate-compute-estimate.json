@@ -1,0 +1,45 @@
+{
+  "catalog_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonECS/current/ap-south-1/index.json",
+  "catalog_version": "20261019224317",
+  "publication_date": "2026-10-19T22:43:17Z",
+  "catalog_sha256": "b68a557c7e4b150dc0f1eea70ac19adb5f488ae3085aa64e438e446770b07ddc",
+  "region": "ap-south-1",
+  "task": {
+    "cpu_units": 256,
+    "memory_mib": 512,
+    "os": "Linux"
+  },
+  "tasks": 1,
+  "hours_per_task": "730",
+  "profiles": {
+    "x86_64": {
+      "vcpus": {
+        "sku": "KV4FGA39G96M59TH",
+        "usd_per_vcpu_hour": "0.0425600000"
+      },
+      "memory": {
+        "sku": "N4Q5MGA6V9TFA2MG",
+        "usd_per_gib_hour": "0.0046550000"
+      },
+      "compute_usd": "9.4662750000"
+    },
+    "arm64": {
+      "vcpus": {
+        "sku": "D8HH737U8NPWA5K7",
+        "usd_per_vcpu_hour": "0.0238300000"
+      },
+      "memory": {
+        "sku": "2FMN22NTTSFVP7KR",
+        "usd_per_gib_hour": "0.0026100000"
+      },
+      "compute_usd": "5.3016250000"
+    }
+  },
+  "scope": "On-demand Fargate CPU and memory only. Excludes all other charges and credits.",
+  "arm64_assumption": "Requires an ARM-compatible image and a separate performance check.",
+  "budget": {
+    "architecture": "x86_64",
+    "max_compute_usd": "10",
+    "passed": true
+  }
+}

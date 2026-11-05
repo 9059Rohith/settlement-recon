@@ -230,6 +230,8 @@ Set `TEST_DATABASE_URL` and the S3-compatible test credentials to execute those 
 | AWS ECS / ALB / RDS / S3 / ECR / IAM | Terraform validated; apply not executed | Requires account credentials, certificate, secrets and budget |
 | Prometheus rules / Grafana dashboard | Exporter exercised; deployment artifacts supplied | Independent monitoring servers are not running in the free host |
 
+The [Fargate compute check](docs/fargate-compute-cost.md) compares the Terraform task size against the live AWS catalog and can enforce a CPU and memory budget threshold.
+
 - **Correctness before parallel write throughput.** A global writer lock makes duplicate and cumulative-amount decisions easy to defend; it limits write concurrency.
 - **Evidence before cross-store atomicity.** Raw archival precedes the financial transaction. A crash between them may leave an unreferenced object; retry safely reuses its checksum.
 - **Bounded synchronous work.** The API returns a durable receipt rather than relying on a process-local background queue. Large reconciliations need an offline/export or pagination extension.
