@@ -1,12 +1,40 @@
 import asyncio
 
 import httpx
+import pytest
 from fastapi.testclient import TestClient
 
 from settlement_recon.api import create_app
 from settlement_recon.domain import FileArchive, Reconciler
 
 TOKEN = "test-token-00000000000000000000000000"
+
+
+@pytest.mark.parametrize(
+    "deployment,hosted,accepted",
+    [
+        ("recon-preview-123.vercel.app", "1", True),
+        ("recon-preview-123.vercel.app", "0", False),
+        ("other.example", "1", False),
+        ("*.vercel.app", "1", False),
+        ("https://recon-preview-123.vercel.app/path", "1", False),
+    ],
+)
+def test_staged_vercel_host_is_exact_and_platform_scoped(
+    tmp_path, monkeypatch, deployment, hosted, accepted
+):
+    monkeypatch.setenv("VERCEL", hosted)
+    monkeypatch.setenv("VERCEL_URL", deployment)
+    service = Reconciler(f"sqlite:///{tmp_path / 'host.db'}", FileArchive(tmp_path / "raw"))
+    configured = ["recon.example"]
+    app = create_app(service, TOKEN, allowed_hosts=configured)
+    with TestClient(app) as client:
+        assert client.get("/healthz", headers={"Host": "recon.example"}).status_code == 200
+        assert client.get("/healthz", headers={"Host": deployment}).status_code == (
+            200 if accepted else 400
+        )
+        assert client.get("/healthz", headers={"Host": "unrelated.vercel.app"}).status_code == 400
+    assert configured == ["recon.example"]
 
 
 def test_unauthenticated_upload_does_not_consume_request_body(tmp_path):

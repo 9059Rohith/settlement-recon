@@ -35,3 +35,9 @@ faults; public source records remain actual dated reference observations.
 See [the portfolio audit](openfx-interview-readiness.md) for final deployment and
 live verification results. Provider availability and the semantic accuracy of
 generated prose cannot be guaranteed; inspect the source trace.
+
+Staging also exposed a host-allowlist mismatch. With an existing allowlist and
+VERCEL=1, the API now adds only the exact validated VERCEL_URL hostname supplied
+by the platform. Wildcards, unrelated deployment hosts and URL-shaped values
+remain rejected. Five regressions cover those boundaries without mutating the
+caller's configured host list.

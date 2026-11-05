@@ -46,7 +46,7 @@ def create_app(
         title="Settlement Recon",
         version="0.1.0",
         description=(
-            "Synthetic cross-border payment reconciliation. Monetary strings use exact currency "
+            "Operator-supplied payment reconciliation. Monetary strings use exact currency "
             "minor units. Upload JSON payments or CSV statements; "
             "inspect quarantine and replay results."
         ),
@@ -54,7 +54,13 @@ def create_app(
     )
     app.state.service = service
     if allowed_hosts:
-        app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+        hosts = list(allowed_hosts)
+        deployment_host = os.getenv("VERCEL_URL", "")
+        if os.getenv("VERCEL") == "1" and re.fullmatch(
+            r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.vercel\.app", deployment_host
+        ):
+            hosts.append(deployment_host)
+        app.add_middleware(TrustedHostMiddleware, allowed_hosts=hosts)
     registry = CollectorRegistry()
     requests = Counter(
         "settlement_recon_http_requests",
