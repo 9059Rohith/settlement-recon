@@ -8,6 +8,8 @@ A Python and SQL reconciliation workspace for operator-supplied payment records 
 
 **Stack:** Python · FastAPI · SQLAlchemy · PostgreSQL · Airflow integration · S3-compatible archival · Docker · Terraform · Prometheus
 
+[OpenFX Data Engineering and DevOps requirement coverage](docs/openfx-jd-coverage.md) links the four projects to executed workflows, measured results, and the remaining account blockers.
+
 ## The engineering problem
 
 A payment API returning success does not prove the money was settled correctly. Statements can arrive late, split one payment across several rows, deduct fees, repeat a previously delivered file, or contain a conflicting identifier. A useful reconciliation system must distinguish those cases and preserve enough evidence to investigate them.

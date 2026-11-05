@@ -1,0 +1,34 @@
+{
+  "checked_at_utc": "2026-11-05T05:11:01.756279+00:00",
+  "scope": "Read-only public API and workbench smoke checks",
+  "results": [
+    {
+      "project": "Settlement Recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/api/history?source=USD&target=INR&start=2025-01-01&end=2025-01-07",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "43cbf089889f7a39af2615a56460c8d9e06c9955c05d70425102ed1ac8c232d2"
+    },
+    {
+      "project": "FluxLake",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/archive-benchmark",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "0e7bb4be0006e678db912a64cba4d51024e999d35dbbb7908a5e232b8f8970ab"
+    },
+    {
+      "project": "DataGuard",
+      "url": "https://rohith-dataguard.vercel.app/api/quality/benchmark?policy=strict",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "df80bc3d554c1c0ba28b4b751799d567118e79ec81215eb227059b609b6a89d5"
+    },
+    {
+      "project": "PipeFoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/workbench/review",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "50b223c9878d09dc53827b344c11ff703a20065c32684955fbfb501535caa4e9"
+    }
+  ]
+}
