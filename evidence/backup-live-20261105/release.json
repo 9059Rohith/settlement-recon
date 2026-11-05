@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-05",
+  "project": "settlement-recon",
+  "deployment_id": "dpl_ABsc7ZjpJ6Muxf8F2VywmFUqAFz6",
+  "runtime_source_commit": "96aca344281a5187656c69f7c2f56654e8057b97",
+  "alias": {
+    "alias": "rohith-settlement-recon.vercel.app",
+    "deployment_id": "dpl_ABsc7ZjpJ6Muxf8F2VywmFUqAFz6",
+    "project_id": "prj_TaUkhUYaTJX2xUHP6mQvXC2Y7AYJ"
+  },
+  "status": "READY",
+  "promoted": true,
+  "public_url": "https://rohith-settlement-recon.vercel.app/",
+  "passed": 230,
+  "skipped": 6,
+  "receipt_scope": "Prior unchanged same-day profile",
+  "preferred_model": "gemini-3.5-flash-lite"
+}

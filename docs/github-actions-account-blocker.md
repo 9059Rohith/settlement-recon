@@ -16,6 +16,10 @@ and Support review when no active subscription, balance or issue is visible.
 The annotation alone does not establish which account-specific cause applies.
 
 The available repository integration cannot manage this account billing lock.
+An additional authenticated capability check confirmed that its connected
+identity differs from the affected personal repository owner. The connector
+does not expose account billing, plan-management, runner-registration or account
+unlock tools. Repository write access is not personal-account billing authority.
 It also rejects workflow-file writes with HTTP 403. The ordinary Git OAuth
 connection previously rejected workflow updates without workflow scope. Existing
 reviewed patches are retained in `docs/workflow-hardening.patch`; their presence
@@ -26,6 +30,14 @@ no paid subscription was enabled, and no account downgrade was performed. A
 downgrade can affect unrelated account features, so it is not a repository fix.
 The existing Vercel Hobby release gates provide executed hosted tests without
 claiming that GitHub Actions passed.
+
+Standard public-repository hosted runners already qualify for free compute.
+Registering a self-hosted runner requires administration that is unavailable in
+this connection, and GitHub does not document it as a bypass for this account
+lock. Downgrade timing and unrelated Copilot/Marketplace billing are separate
+from changing the repository's runner. See
+[runner prerequisites](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
+and [plan-change effects](https://docs.github.com/en/billing/concepts/impact-of-plan-changes).
 
 ## Ready-to-use Support request (draft, not sent)
 

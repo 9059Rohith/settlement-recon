@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "provider": "release-container-build",
+  "verified_at": "2026-11-05T11:53:48.090531+00:00",
+  "python": "3.15.1",
+  "platform": "Linux",
+  "source": {
+    "sha256": "79bd2ef5d23fb04f5006d4070d296e4979307c295ccb0a5a66dad939989aa1ed",
+    "files": 107
+  },
+  "checks": [
+    {
+      "name": "ruff-check",
+      "exit_code": 0
+    },
+    {
+      "name": "ruff-format",
+      "exit_code": 0
+    },
+    {
+      "name": "bandit-medium-high",
+      "exit_code": 0
+    },
+    {
+      "name": "pytest-default",
+      "exit_code": 0
+    }
+  ],
+  "tests": {
+    "passed": 230,
+    "skipped": 6,
+    "failures": 0,
+    "errors": 0,
+    "cases": 236
+  },
+  "scope": "Default isolated tests; optional PostgreSQL/S3 integrations are skipped. Not a GitHub Actions or AWS deployment claim."
+}

@@ -1,6 +1,14 @@
 # OpenFX interview readiness audit — 5 November 2026
 
-## Current AI recovery release
+## Current live backup verification
+
+[Real hosted backup inference, observed automatic failover, DataGuard's healthy
+free-model deployment and the latest four-app retest](backup-live-verification.md)
+supersede the earlier secondary-model observation limit. GitHub's account lock
+still requires owner-authorized account resolution; free hosted build gates are
+not represented as GitHub Actions runs.
+
+## Earlier AI recovery release
 
 [Current source commits, hosted receipts, live API/provider observations and
 remaining account blockers](ai-recovery-release.md) record the subsequent
