@@ -42,6 +42,40 @@ def locked(title, description, slug):
     return f"""<section class="access-state"><div class="access-symbol">{icon(slug, 32)}</div><h2>{title}</h2><p>{description}</p><button class="primary" data-connect>{icon("user", 17)}Connect operator</button><div class="access-note">Public source data stays open. Financial records stay protected.</div></section>"""
 
 
+ATLAS = (
+    ("overview", "rates", "See the reference market", "Start with the captured ECB observations."),
+    ("archive-window", "history", "Replay a market window", "Compare observed rates across dates and currencies."),
+    ("cross-rate", "converter", "Trace a cross-rate", "Calculate with decimal currency arithmetic."),
+    ("matching-desk", "reconciliation", "Open the matching desk", "Inspect the operator workflow for authorized records."),
+    ("receipt-proof", "batches", "Follow a batch receipt", "See how original source bytes remain traceable."),
+)
+ATLAS_ASSETS = frozenset({item[0] for item in ATLAS} | {"source-seal", "record-path"})
+
+
+def plate(slug, *, eager=False):
+    return f'<img class="atlas-plate" src="/workspace/assets/atlas/{slug}.svg" width="1040" height="400" alt="" loading="{"eager" if eager else "lazy"}" decoding="async">'
+
+
+def atlas():
+    cards = "".join(
+        f'<a class="atlas-card" data-atlas-reveal href="/workspace/{route}"><div class="atlas-card-media">{plate(asset)}</div><div class="atlas-card-body"><h3>{label}</h3><p>{summary}</p>{icon("arrow", 18)}</div></a>'
+        for asset, route, label, summary in ATLAS
+    )
+    return f'<section id="atlas" class="atlas-index" aria-labelledby="atlas-title"><div class="atlas-index-intro"><h2 id="atlas-title">Explore the evidence</h2><p>Follow an observation from its source through analysis, matching and review.</p></div><div class="atlas-grid">{cards}</div></section>'
+
+
+def masthead(page, title, subtitle):
+    if page != "overview":
+        return f'<section class="heading atlas-heading">{plate(page, eager=True)}<div class="atlas-heading-copy"><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div></section>'
+
+    return f"""<section class="heading atlas-heading atlas-cover">
+      <img class="atlas-cover-image" src="/workspace/assets/atlas/clearing-globe.webp" srcset="/workspace/assets/atlas/clearing-globe-small.webp 720w, /workspace/assets/atlas/clearing-globe.webp 1280w" sizes="(max-width: 700px) 100vw, (max-width: 930px) calc(100vw - 205px), calc(100vw - 232px)" width="1280" height="720" fetchpriority="high" alt="">
+      <div class="atlas-heading-copy"><h1>Settlement operations</h1><p class="atlas-cover-deck">Trace the money.</p>
+      <p>Explore real exchange-rate observations, or follow authorized financial records from intake to settlement evidence.</p>
+      <div class="atlas-actions"><a class="button atlas-action" href="/workspace/history">Replay historical FX {icon("arrow", 17)}</a><a class="button atlas-action-quiet" href="#atlas">Explore the evidence {icon("arrow", 17)}</a></div></div>
+    </section>"""
+
+
 HISTORY = """<div class="history-layout">
 <section class="panel history-controls">
   <div class="panel-heading"><div><h2>Replay a published market window</h2>
@@ -92,14 +126,18 @@ def render(page, pages, css):
         + """<span class="sr-only">Search currencies</span><input id="currency-search" placeholder="Search currencies" type="search" autocomplete="off"></label></div><div id="rates" aria-live="polite"><div class="skeleton">Loading captured observations…</div></div><div class="panel-footer"><span id="currency-count">Checking source</span><a href="/workspace/rates">View every currency</a></div></section>"""
     )
     source_panel = (
-        """<section class="source-panel"><h2>A traceable source</h2><dl><div><dt>Source</dt><dd>Frankfurter / ECB</dd></div><div><dt>Captured</dt><dd id="capture-date">—</dd></div><div><dt>Digest</dt><dd><code id="source-digest">—</code><button class="icon-button" id="copy-digest" aria-label="Copy source digest">"""
+        """<section class="source-panel atlas-source">"""
+        + plate("source-seal")
+        + """<h2>A traceable source</h2><dl><div><dt>Source</dt><dd>Frankfurter / ECB</dd></div><div><dt>Captured</dt><dd id="capture-date">—</dd></div><div><dt>Digest</dt><dd><code id="source-digest">—</code><button class="icon-button" id="copy-digest" aria-label="Copy source digest">"""
         + icon("copy", 16)
         + """</button></dd></div></dl><a class="button primary" href="/workspace/provenance">"""
         + icon("external", 17)
         + """Inspect provenance</a></section>"""
     )
     workflow = (
-        """<section class="workflow"><div class="panel-heading"><h2>A clear path from records to settlement</h2><a href="/workspace/ingest">Explore the workflow """
+        """<section class="workflow atlas-workflow"><div class="atlas-workflow-media" data-atlas-reveal>"""
+        + plate("record-path")
+        + """</div><div class="panel-heading"><h2>A clear path from records to settlement</h2><a href="/workspace/ingest">Explore the workflow """
         + icon("arrow", 16)
         + """</a></div><div class="workflow-steps"><a href="/workspace/ingest"><span>1</span><div><h3>Connect your records</h3><p>Ingest actual payment records and bank statements. Financial ingestion requires operator access.</p></div></a><a href="/workspace/reconciliation"><span>2</span><div><h3>Reconcile precisely</h3><p>Match currency amounts with decimal precision and replay-safe processing.</p></div></a><a href="/workspace/exceptions"><span>3</span><div><h3>Resolve with evidence</h3><p>Trace exceptions to source records and inspect immutable batch receipts.</p></div></a></div></section>"""
     )
@@ -115,6 +153,7 @@ def render(page, pages, css):
         + source_panel
         + agent_help
         + "</div></div>"
+        + atlas()
         + workflow,
         "rates": currency_table
         + """<div class="source-footnote"><p id="rate-observation"></p><button id="sync" class="secondary">Synchronize provider</button><span>Refreshing the source requires operator access.</span></div>""",
@@ -185,4 +224,4 @@ def render(page, pages, css):
         + icon("external", 16)
         + """</a></div><div id="status"></div></section><section class="panel"><h2>Readiness checks</h2><p>Inspect the database and archive from an authorized operator session.</p><button id="readiness" class="secondary">Check database and archive</button><div id="ready"></div><p>Operator credentials stay in this page's memory and are cleared on navigation.</p></section></div>""",
     }[page]
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="description" content="Evidence-first payment reconciliation and public reference-rate investigations."><title>{html.escape(title)} | Settlement Recon</title><link rel="preload" href="/workspace/assets/manrope.ttf" as="font" type="font/ttf" crossorigin><style>{css}</style></head><body data-page="{page}"><a class="skip-link" href="#main-content">Skip to content</a><aside class="sidebar" id="workspace-navigation"><a class="brand" href="/workspace/overview"><span class="brand-mark">SR</span><span>Settlement Recon</span></a><nav aria-label="Workspace">{navigation}</nav><div class="sidebar-footer"><span class="source-dot"></span> Evidence-first operations<a href="https://github.com/9059Rohith/settlement-recon">Source repository {icon("external", 14)}</a></div></aside><div class="app-shell"><header class="topbar"><div class="breadcrumb"><button id="nav-toggle" class="icon-button" aria-label="Toggle navigation" aria-controls="workspace-navigation" aria-expanded="false">{icon("menu")}</button><span>Operations</span><span class="slash">/</span><strong>{"Overview" if page == "overview" else html.escape(title)}</strong></div><div class="topbar-actions"><button class="command-trigger" id="open-command">{icon("search", 18)}<span>Find a page</span><kbd>⌘ K</kbd></button><button id="connect" class="primary compact">{icon("user", 17)}<span>Operator access</span></button></div></header><main id="main-content" tabindex="-1"><section class="heading"><div><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div>{link("agent", "Ask the investigator", primary=True) if page == "overview" else ""}</section><div id="notice" role="status" aria-live="polite"></div><div class="page-content">{content}</div><footer class="page-footer"><span>Reference rates are informational, not executable prices.</span><a href="/workspace/provenance">Inspect the source {icon("arrow", 14)}</a></footer></main></div><dialog id="session"><form id="session-form"><div class="dialog-heading"><h2>Operator access</h2><button type="button" id="close-session" class="icon-button" aria-label="Close operator access">{icon("close")}</button></div><p>Public investigations need no token. Enter an existing reader or writer token only for protected operations.</p><label>Bearer token<input name="token" type="password" minlength="32" autocomplete="off" required></label><p class="muted">Sent only to this origin and held in this page's memory.</p><button class="primary">Connect operator</button></form></dialog><dialog id="command-palette"><div class="command-input">{icon("search")}<label class="sr-only" for="command-search">Find a workspace page</label><input id="command-search" placeholder="Where would you like to go?" autocomplete="off"><button class="icon-button" id="close-command" aria-label="Close page search">{icon("close")}</button></div><nav id="command-results" aria-label="Page search results">{palette}</nav><p class="command-hint">Use ↑ ↓ to choose · Enter to open · Esc to close</p></dialog><dialog id="currency-detail" class="detail-drawer"><div class="dialog-heading"><h2 id="detail-title">Currency evidence</h2><button class="icon-button" id="close-detail" aria-label="Close currency evidence">{icon("close")}</button></div><div id="detail-content"></div></dialog><script src="/workspace/assets/format.js" defer></script><script src="/workspace/assets/app.js" defer></script>{'<script src="/workspace/assets/treasury.js" defer></script>' if page == "treasury" else ""}{'<script src="/workspace/assets/history.js" defer></script>' if page == "history" else ""}</body></html>'''
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a1930"><meta name="description" content="Evidence-first payment reconciliation and public reference-rate investigations."><title>{html.escape(title)} | Settlement Recon</title><link rel="icon" href="/workspace/assets/atlas/mark.svg" type="image/svg+xml"><link rel="preload" href="/workspace/assets/manrope.ttf" as="font" type="font/ttf" crossorigin><style>{css}</style></head><body data-page="{page}"><a class="skip-link" href="#main-content">Skip to content</a><aside class="sidebar" id="workspace-navigation"><a class="brand" href="/workspace/overview"><span class="brand-mark">SR</span><span>Settlement Recon</span></a><nav aria-label="Workspace">{navigation}</nav><div class="sidebar-footer"><span class="source-dot"></span> Evidence-first operations<a href="https://github.com/9059Rohith/settlement-recon">Source repository {icon("external", 14)}</a></div></aside><div class="app-shell"><header class="topbar"><div class="breadcrumb"><button id="nav-toggle" class="icon-button" aria-label="Toggle navigation" aria-controls="workspace-navigation" aria-expanded="false">{icon("menu")}</button><span>Operations</span><span class="slash">/</span><strong>{"Overview" if page == "overview" else html.escape(title)}</strong></div><div class="topbar-actions"><button class="command-trigger" id="open-command" aria-label="Find a page">{icon("search", 18)}<span>Find a page</span><kbd>⌘ K</kbd></button><button id="connect" class="primary compact" aria-label="Operator access">{icon("user", 17)}<span>Operator access</span></button></div></header><main id="main-content" tabindex="-1">{masthead(page, title, subtitle)}<div id="notice" role="status" aria-live="polite"></div><div class="page-content">{content}</div><footer class="page-footer"><span>Reference rates are informational, not executable prices.</span><a href="/workspace/provenance">Inspect the source {icon("arrow", 14)}</a></footer></main></div><dialog id="session"><form id="session-form"><div class="dialog-heading"><h2>Operator access</h2><button type="button" id="close-session" class="icon-button" aria-label="Close operator access">{icon("close")}</button></div><p>Public investigations need no token. Enter an existing reader or writer token only for protected operations.</p><label>Bearer token<input name="token" type="password" minlength="32" autocomplete="off" required></label><p class="muted">Sent only to this origin and held in this page's memory.</p><button class="primary">Connect operator</button></form></dialog><dialog id="command-palette"><div class="command-input">{icon("search")}<label class="sr-only" for="command-search">Find a workspace page</label><input id="command-search" placeholder="Where would you like to go?" autocomplete="off"><button class="icon-button" id="close-command" aria-label="Close page search">{icon("close")}</button></div><nav id="command-results" aria-label="Page search results">{palette}</nav><p class="command-hint">Use ↑ ↓ to choose · Enter to open · Esc to close</p></dialog><dialog id="currency-detail" class="detail-drawer"><div class="dialog-heading"><h2 id="detail-title">Currency evidence</h2><button class="icon-button" id="close-detail" aria-label="Close currency evidence">{icon("close")}</button></div><div id="detail-content"></div></dialog><script src="/workspace/assets/format.js" defer></script><script src="/workspace/assets/app.js" defer></script>{'<script src="/workspace/assets/treasury.js" defer></script>' if page == "treasury" else ""}{'<script src="/workspace/assets/history.js" defer></script>' if page == "history" else ""}</body></html>'''

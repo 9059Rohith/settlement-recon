@@ -177,6 +177,7 @@ class PublicQuestion(BaseModel):
 
 def install(app, service, authenticate, writer, demo_secret=""):
     from settlement_recon.public_demo import DemoBudget, client_identity, same_origin
+    from settlement_recon.workspace_ui import ATLAS_ASSETS
 
     demo_budget = DemoBudget(service.engine, demo_secret)
 
@@ -510,6 +511,22 @@ def install(app, service, authenticate, writer, demo_secret=""):
             media_type="font/ttf",
         )
 
+    atlas_images = {f"{slug}.svg": "image/svg+xml" for slug in PAGES.keys() | ATLAS_ASSETS}
+    atlas_images["mark.svg"] = "image/svg+xml"
+    atlas_images["clearing-globe.webp"] = "image/webp"
+    atlas_images["clearing-globe-small.webp"] = "image/webp"
+
+    @app.get("/workspace/assets/atlas/{name}", include_in_schema=False)
+    def atlas_asset(name: str):
+        media_type = atlas_images.get(name)
+        if media_type is None:
+            raise HTTPException(404, "Artwork not found")
+        return Response(
+            ATLAS_DIRECTORY.joinpath(name).read_bytes(),
+            media_type=media_type,
+            headers={"Cache-Control": "public, max-age=3600"},
+        )
+
     @app.get("/workspace/assets/format.js", include_in_schema=False)
     def format_script():
         return Response(
@@ -577,3 +594,5 @@ def render(page="overview"):
 CSS = Path(__file__).with_name("workspace.css").read_text(encoding="utf-8")
 
 JS = Path(__file__).with_name("workspace.js").read_text(encoding="utf-8")
+
+ATLAS_DIRECTORY = Path(__file__).with_name("assets") / "atlas"

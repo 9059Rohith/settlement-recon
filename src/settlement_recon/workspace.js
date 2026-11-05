@@ -843,4 +843,23 @@ if ($("#agent"))
       if (!cooldown) button.disabled = false;
     }
   };
+if (
+  "IntersectionObserver" in window &&
+  !CSS.supports("animation-timeline: view()") &&
+  matchMedia("(prefers-reduced-motion: no-preference)").matches
+) {
+  const atlasObserver = new IntersectionObserver(
+    (entries, observer) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("atlas-revealed");
+        observer.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.23 },
+  );
+  document.querySelectorAll("[data-atlas-reveal]").forEach((plate) => {
+    atlasObserver.observe(plate);
+  });
+}
 load();

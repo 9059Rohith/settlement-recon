@@ -131,13 +131,13 @@ def create_app(
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Cache-Control"] = "no-store"
+        response.headers.setdefault("Cache-Control", "no-store")
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         if request.url.path not in {"/docs", "/redoc"}:
             response.headers["Content-Security-Policy"] = (
                 "default-src 'none'; script-src 'self'; connect-src 'self'; "
-                "style-src 'unsafe-inline'; font-src 'self'; frame-ancestors 'none'; "
-                "base-uri 'none'; form-action 'self'"
+                "style-src 'unsafe-inline'; font-src 'self'; img-src 'self'; "
+                "frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
             )
         # No payloads, URLs, credentials or database strings in operational logs.
         logger.info(

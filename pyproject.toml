@@ -19,7 +19,7 @@ dependencies = {file = ["requirements.txt"]}
 where = ["src"]
 
 [tool.setuptools.package-data]
-settlement_recon = ["*.html", "*.css", "*.js", "assets/*.ttf", "assets/*OFL.txt", "assets/ecb-historical.zip"]
+settlement_recon = ["*.html", "*.css", "*.js", "assets/*.ttf", "assets/*OFL.txt", "assets/ecb-historical.zip", "assets/atlas/*.svg", "assets/atlas/*.webp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
