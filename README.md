@@ -1,5 +1,7 @@
 # Settlement Recon
 
+**Free hosted release verification (5 Nov 2026):** 222 tests passed, 6 explicit optional skips on the actual Linux builder. Every release image depends on a successful verification receipt. [Build logs, public retests and exact GitHub/AWS blockers](docs/free-hosted-ci.md).
+
 [OpenFX readiness audit](docs/openfx-interview-readiness.md) · [Interview demonstration](docs/interview.md)
 
 **Explain payment mismatches. Investigate allocation ambiguity. Preserve the evidence.**

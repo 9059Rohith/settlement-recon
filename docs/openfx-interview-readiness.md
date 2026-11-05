@@ -1,5 +1,16 @@
 # OpenFX interview readiness audit — 5 November 2026
 
+## Latest release: free hosted build gates
+
+All four apps now have executed Vercel Linux build gates, with **771 default
+tests passed and 64 explicit optional skips**, plus verified production promotion.
+The final public API checks passed 14/14 and the latest real anonymous AI calls
+passed for all four apps. Two initial AI503s and their successful cooldown retests
+remain recorded. [Current release evidence, deployment identities and exact
+GitHub/AWS blockers](free-hosted-ci.md) supersede the earlier runtime identities
+below. GitHub Actions remains blocked before execution by an account billing
+lock; workflow writes are unauthorized, and AWS credentials are unavailable.
+
 ## Honest assessment
 
 These four repositories offer strong, complementary project evidence for both
@@ -10,11 +21,12 @@ Code quantity, page count and visual polish cannot establish that ranking.
 
 Data Engineering has the strongest directly executed coverage. DevOps has
 substantial local/container/Kubernetes/observability evidence and actual public
-hosting, but AWS operation and a successful hosted CI run remain evidence gaps.
+hosting and actual free hosted build gates, but AWS operation and a successful
+GitHub Actions run remain evidence gaps.
 Project evidence cannot establish the applicant's SQL, Linux, networking,
 debugging proficiency, degree eligibility or six-month availability.
 
-## Fresh verification results
+## Earlier same-day verification results (before the build-gate release)
 
 The final two changed runtime deployments were staged, checked through real
 anonymous evidence-tool/model calls, promoted and resolved from their canonical
@@ -85,7 +97,7 @@ release. [Machine-readable results and original logs](../evidence/interview-audi
 | --- | --- |
 | Build/maintain cloud infrastructure, primarily AWS | Actual Vercel/Neon hosting and AWS Terraform definitions/validation. AWS apply, IAM execution, managed failover and ongoing operation remain unverified. |
 | Infrastructure as Code / Terraform | Versioned VPC, compute/storage/identity configurations and provider validation. Validation alone is not a deployment. |
-| CI/CD development and improvement | Nine workflow files, local equivalent checks and real Vercel staged promotion. An immutable-action-reference patch is prepared and validated, but cannot be applied through the current OAuth connection; a passing hosted GitHub Actions run remains unverified. |
+| CI/CD development and improvement | Nine workflow files, local equivalent checks, real Vercel staged promotion and newly executed Linux release-build gates. An immutable-action-reference patch is prepared and validated, but cannot be applied through the current OAuth connection; the account billing lock prevents a passing GitHub Actions run. |
 | Docker, Kubernetes and containerized apps | Non-root images plus three actual completed K3s Jobs across guarded create/update/rollback. [Executed cluster evidence](https://github.com/9059Rohith/pipefoundry/blob/main/docs/kubernetes-release-proof.md). |
 | Python/Bash scripts and automation | Actual ingestion, rendering, deployment, release verification, recovery and benchmarking commands. |
 | Monitoring, logging, alerting and observability | DataGuard Prometheus rules reached pending/firing/inactive during actual local DB/API failures; no external pager delivery is claimed. [Alert drill](https://github.com/9059Rohith/dataguard/blob/main/docs/prometheus-alert-drill.md). |
@@ -127,12 +139,13 @@ release. [Machine-readable results and original logs](../evidence/interview-audi
 
 ## What remains before stronger claims
 
-- **AWS operating evidence:** provision and verify the reviewed profiles in an
-  authorized account with an explicit cost budget, or discuss them as design/IaC
-  exposure. Public free hosting does not demonstrate AWS IAM/RDS/EKS/DMS operation.
-- **Hosted CI:** obtain a genuinely completed run after account/runner availability
-  permits it. Local passing tests and immutable workflow refs do not establish a
-  hosted green build. The proposed hardening also needs a connection authorized
+- **AWS operating evidence:** credentials and a verified eligible Free account
+  plan are unavailable. The reviewed profiles must remain design/IaC exposure
+  until an authorized deployment can meet the free-only constraint. Public free
+  hosting does not demonstrate AWS IAM/RDS/EKS/DMS operation.
+- **GitHub Actions:** obtain a genuinely completed run after the account billing
+  lock is resolved. The new Vercel Linux gates establish hosted verification,
+  while GitHub Actions remains blocked. The proposed hardening also needs a connection authorized
   to update workflow files before it can be applied. No privilege escalation was
   attempted. Existing failed run outcomes are preserved in PipeFoundry.
 - **Production operations:** individual identities/RBAC, versioned DB migrations,

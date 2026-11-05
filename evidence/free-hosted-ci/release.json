@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-05",
+  "project": "settlement-recon",
+  "source_commit": "16735ff93de24e721d9d40904a2d5e2db289b0b5",
+  "deployment_id": "dpl_2aTEMszvjou1bgiBxRKX8Bo99zfV",
+  "deployment_status": "READY",
+  "promoted": true,
+  "public_url": "https://rohith-settlement-recon.vercel.app/",
+  "alias_verification": {
+    "alias": "rohith-settlement-recon.vercel.app",
+    "deployment_id": "dpl_2aTEMszvjou1bgiBxRKX8Bo99zfV",
+    "project_id": "prj_TaUkhUYaTJX2xUHP6mQvXC2Y7AYJ"
+  },
+  "provider": "Vercel Hobby Linux container build",
+  "hosted_tests_passed": 222,
+  "hosted_tests_skipped": 6,
+  "build_log_sha256": "9667ccba8597c8d615fa43dd17c5f0e317a4be80e864e75d5c10787ce6d75a71",
+  "public_api_checks_passed": 14,
+  "latest_public_ai_checks_passed": 4,
+  "known_initial_provider_failures": "Settlement Recon and FluxLake AI503; next bounded requests after cooldown passed",
+  "github_actions": "Blocked before execution by account billing lock; workflow writes unauthorized",
+  "aws": "No credentials or profile; no AWS apply or deployment",
+  "browser_retest": "Not executed this task: browser automation unavailable"
+}
