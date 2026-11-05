@@ -1,0 +1,20 @@
+{
+  "deployment_id": "dpl_ABsc7ZjpJ6Muxf8F2VywmFUqAFz6",
+  "source_commit": "96aca344281a5187656c69f7c2f56654e8057b97",
+  "build_log": "hosted-build.log",
+  "receipt_marker": "BUILD_VERIFY_RECEIPT ",
+  "public_url": "https://rohith-settlement-recon.vercel.app/",
+  "status": "READY",
+  "promoted": true,
+  "alias": {
+    "alias": "rohith-settlement-recon.vercel.app",
+    "deployment_id": "dpl_ABsc7ZjpJ6Muxf8F2VywmFUqAFz6",
+    "project_id": "prj_TaUkhUYaTJX2xUHP6mQvXC2Y7AYJ"
+  },
+  "hosted_passed": 230,
+  "hosted_skipped": 6,
+  "build_log_sha256": "21056fa50a49455b6344fb7f1dd8ed08fca5e5a2c2737e8b926dd0319f8a3bab",
+  "github_actions": "Account billing lock: jobs never started",
+  "aws": "No credentials or apply; existing free Vercel/Neon deployment used",
+  "retest": "14 public API checks; latest 4/4 real AI calls passed; earlier PipeFoundry503s retained; no new browser run"
+}

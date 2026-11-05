@@ -1,6 +1,13 @@
 # OpenFX interview readiness audit — 5 November 2026
 
-## Latest release: free hosted build gates
+## Current AI recovery release
+
+[Current source commits, hosted receipts, live API/provider observations and
+remaining account blockers](ai-recovery-release.md) record the subsequent
+transient-recovery and free-model-routing release. The earlier test counts and
+runtime identities below retain their own scope and are not current uptime claims.
+
+## Earlier same-day release: free hosted build gates
 
 All four apps now have executed Vercel Linux build gates, with **771 default
 tests passed and 64 explicit optional skips**, plus verified production promotion.

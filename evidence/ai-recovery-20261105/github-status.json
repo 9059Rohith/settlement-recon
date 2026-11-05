@@ -1,0 +1,51 @@
+{
+  "project": "settlement-recon",
+  "checked_at": "2026-11-05T12:06:53.333057+00:00",
+  "run": {
+    "id": 42022928121,
+    "head_sha": "96aca344281a5187656c69f7c2f56654e8057b97",
+    "html_url": "https://github.com/9059Rohith/settlement-recon/actions/runs/42022928121",
+    "status": "completed",
+    "conclusion": "failure"
+  },
+  "jobs": [
+    {
+      "name": "verify",
+      "conclusion": "failure",
+      "steps": [],
+      "html_url": "https://github.com/9059Rohith/settlement-recon/actions/runs/42022928121/job/127229912711"
+    },
+    {
+      "name": "airflow",
+      "conclusion": "failure",
+      "steps": [],
+      "html_url": "https://github.com/9059Rohith/settlement-recon/actions/runs/42022928121/job/127229913174"
+    }
+  ],
+  "annotations": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/9059Rohith/settlement-recon/blob/96aca344281a5187656c69f7c2f56654e8057b97/.github",
+      "start_line": 1,
+      "start_column": null,
+      "end_line": 1,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "",
+      "message": "The job was not started because your account is locked due to a billing issue.",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/9059Rohith/settlement-recon/blob/96aca344281a5187656c69f7c2f56654e8057b97/.github",
+      "start_line": 1,
+      "start_column": null,
+      "end_line": 1,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "",
+      "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+      "raw_details": ""
+    }
+  ]
+}

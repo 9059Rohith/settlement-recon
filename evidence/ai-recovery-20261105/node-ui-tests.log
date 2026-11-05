@@ -1,0 +1,13 @@
+✔ provider HTTP-date cooldowns stay finite and cannot enable early resubmission (5.9015ms)
+✔ compact risk values explicitly truncate without losing integer precision (0.6871ms)
+✔ large financial results retain all digits, including values beyond Number precision (0.3059ms)
+✔ bold source identifiers retain their nested code formatting (2.0719ms)
+✔ untrusted markup and javascript links stay inert text tokens (0.2858ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.1606
