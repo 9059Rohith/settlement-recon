@@ -24,8 +24,10 @@ Review likely mistakes: confusing local SQLite with public PostgreSQL, calling a
 
 ## Completion evidence
 
-Final results: 797 distinct passing cases across overlapping default and isolated PostgreSQL profiles, five optional/inapplicable skips, 14 public API checks, eight mobile/desktop workflows and four real public AI answers. Runtime fixes were staged and promoted for Settlement Recon and DataGuard; FluxLake/PipeFoundry runtime code remained unchanged. Direct CI pins and interview materials are published separately.
+Final results: 797 distinct passing cases across overlapping default and isolated PostgreSQL profiles, five optional/inapplicable skips, 14 public API checks, eight mobile/desktop workflows and four real public AI answers. Runtime fixes were staged and promoted for Settlement Recon and DataGuard; FluxLake/PipeFoundry runtime code remained unchanged. Interview materials are published separately. CI hardening is delivered as applicable patch files because GitHub rejected workflow updates without OAuth workflow scope.
 
 Ruling: the live audit expanded scope to two AI502 responses and an exact-host staging failure. Their code changes used failing regressions before implementation. The specific original upstream AI causes remain unconfirmed; bounded recovery and safe diagnostics are verified rather than asserting a historical cause.
 
 Ruling: an initial disposable DataGuard database name was rejected by the existing _test safety guard. The harness was corrected rather than weakening that guard; the corrected focused suite passed35 tests.
+
+External blocker: GitHub rejected workflow publication because the OAuth App lacks workflow scope. Rejected task commits are retained on local codex/openfx-workflow-hardening-20261105 branches. Each repository publishes a checked docs/workflow-hardening.patch; active workflows remain unchanged. Only non-workflow documents/evidence are published through the current connection. No alternative credentials or privilege escalation were attempted.
