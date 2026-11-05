@@ -4,11 +4,13 @@
 
 import hashlib
 import json
+import logging
 import os
 import threading
 import time
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 import httpx
@@ -16,6 +18,8 @@ from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, MetaData, String, Table, Text, select
+
+LOGGER = logging.getLogger(__name__)
 
 PAGES = {
     "overview": (
@@ -105,6 +109,82 @@ def provider_config():
         "name": "OpenAI",
         "endpoint": "https://api.openai.com/v1/chat/completions",
     }
+
+
+def provider_retry_delay(value):
+    if not isinstance(value, str) or not value.isascii() or len(value) > 128:
+        return None
+    if value.isdecimal():
+        return value if int(value) > 0 else None
+    try:
+        target = parsedate_to_datetime(value)
+        if target.tzinfo is None:
+            target = target.replace(tzinfo=UTC)
+        return value if target.timestamp() > time.time() else None
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+def model_request(client, provider, payload, budget):
+    """One shared transient retry; no provider switch, secret logging or tool replay."""
+    while True:
+        remaining = budget["deadline"] - time.monotonic()
+        if remaining <= 0 or budget["requests"] >= 4:
+            raise HTTPException(
+                503,
+                "AI investigation request budget reached; retry later",
+                headers={"Retry-After": "60"},
+            )
+        budget["requests"] += 1
+        transient = False
+        try:
+            response = client.post(
+                provider["endpoint"],
+                headers={"Authorization": f"Bearer {provider['key']}"},
+                json=payload,
+                timeout=min(20, remaining),
+            )
+            delay = provider_retry_delay(response.headers.get("Retry-After", ""))
+            if response.status_code in {429, 500, 502, 503, 504} and delay is not None:
+                LOGGER.warning("AI upstream requested retry status=%s", response.status_code)
+                raise HTTPException(
+                    429 if response.status_code == 429 else 503,
+                    "AI provider quota requested a retry delay; no data was changed."
+                    if response.status_code == 429
+                    else "AI provider requested a retry delay; no data was changed.",
+                    headers={"Retry-After": delay},
+                )
+            if response.status_code == 429:
+                raise HTTPException(
+                    429,
+                    "AI free-tier quota reached; retry later. No paid fallback is enabled.",
+                    headers={"Retry-After": "60"},
+                )
+            if response.status_code >= 400:
+                LOGGER.warning(
+                    "AI upstream HTTP failure status=%s attempt=%s",
+                    response.status_code,
+                    budget["requests"],
+                )
+            transient = response.status_code in {500, 502, 503, 504}
+            if not transient:
+                return response
+        except (httpx.TimeoutException, httpx.NetworkError) as error:
+            LOGGER.warning(
+                "AI upstream transport failure type=%s attempt=%s",
+                type(error).__name__,
+                budget["requests"],
+            )
+            transient = True
+        if transient and budget["retry_available"] and budget["deadline"] - time.monotonic() > 1:
+            budget["retry_available"] = False
+            time.sleep(0.5)
+            continue
+        raise HTTPException(
+            503,
+            "AI provider temporarily unavailable; retry later. No data was changed.",
+            headers={"Retry-After": "60"},
+        )
 
 
 class Conversion(BaseModel):
@@ -425,34 +505,35 @@ def install(app, service, authenticate, writer, demo_secret=""):
         ]
 
         trace = []
+        budget = {"deadline": time.monotonic() + 60, "retry_available": True, "requests": 0}
 
         with httpx.Client(timeout=40, follow_redirects=False) as client:
             for step in range(3):
                 try:
-                    response = client.post(
-                        provider["endpoint"],
-                        headers={"Authorization": f"Bearer {key}"},
-                        json={
+                    response = model_request(
+                        client,
+                        provider,
+                        {
                             "model": model,
                             "messages": messages,
                             "tools": tools,
                             "tool_choice": "required" if step == 0 else "auto",
                             "max_tokens": 900,
+                            **(
+                                {"reasoning_effort": "minimal"}
+                                if provider["name"].startswith("Google Gemini")
+                                else {}
+                            ),
                         },
+                        budget,
                     )
-
-                    if response.status_code == 429:
-                        raise HTTPException(
-                            429,
-                            "AI free-tier quota reached; retry later. No paid fallback is enabled.",
-                            headers={"Retry-After": "60"},
-                        )
 
                     response.raise_for_status()
 
                     answer = response.json()["choices"][0]["message"]
 
                 except (httpx.HTTPError, KeyError, ValueError, IndexError) as error:
+                    LOGGER.warning("AI upstream protocol failure type=%s", type(error).__name__)
                     raise HTTPException(502, "Model provider request failed") from error
 
                 if not answer.get("tool_calls"):

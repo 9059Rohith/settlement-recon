@@ -44,10 +44,30 @@ def locked(title, description, slug):
 
 ATLAS = (
     ("overview", "rates", "See the reference market", "Start with the captured ECB observations."),
-    ("archive-window", "history", "Replay a market window", "Compare observed rates across dates and currencies."),
-    ("cross-rate", "converter", "Trace a cross-rate", "Calculate with decimal currency arithmetic."),
-    ("matching-desk", "reconciliation", "Open the matching desk", "Inspect the operator workflow for authorized records."),
-    ("receipt-proof", "batches", "Follow a batch receipt", "See how original source bytes remain traceable."),
+    (
+        "archive-window",
+        "history",
+        "Replay a market window",
+        "Compare observed rates across dates and currencies.",
+    ),
+    (
+        "cross-rate",
+        "converter",
+        "Trace a cross-rate",
+        "Calculate with decimal currency arithmetic.",
+    ),
+    (
+        "matching-desk",
+        "reconciliation",
+        "Open the matching desk",
+        "Inspect the operator workflow for authorized records.",
+    ),
+    (
+        "receipt-proof",
+        "batches",
+        "Follow a batch receipt",
+        "See how original source bytes remain traceable.",
+    ),
 )
 ATLAS_ASSETS = frozenset({item[0] for item in ATLAS} | {"source-seal", "record-path"})
 
