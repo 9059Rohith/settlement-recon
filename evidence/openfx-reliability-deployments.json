@@ -1,0 +1,37 @@
+{
+  "at_utc": "2026-11-05T06:46:18.251038+00:00",
+  "entries": [
+    {
+      "project": "dataguard",
+      "commit": "25286831df9cc3f5c562c53d9389a255f1c5c7ea",
+      "deployment_id": "dpl_59gomuva6NGU5ur7pFT2sP8LSLsm",
+      "url": "https://rohith-dataguard.vercel.app",
+      "staged_readiness": 200,
+      "first_staged_ready_seconds": 3.673751
+    },
+    {
+      "project": "pipefoundry",
+      "commit": "cfbb059334abcea62759c3d8d3d44ab0c5d88501",
+      "deployment_id": "dpl_Eced6VYAvQenEgoi1NBf47Hk38Bh",
+      "url": "https://rohith-pipefoundry.vercel.app",
+      "staged_readiness": 200,
+      "staged_asset_sha256": "8dd16cabb9045bfd3926acbe4615e6ef5e090605542c3fbb01e438975b786a2b",
+      "staged_asset_matches_source": true
+    },
+    {
+      "project": "fluxlake",
+      "commit": "e013094917bf1e6a4141ccd204fbf047dfe87613",
+      "deployment_id": "dpl_9JJgQUJrQcGkeP1oQ7WFCbhmHtJM",
+      "url": "https://rohith-fluxlake.vercel.app",
+      "staged_readiness": 200,
+      "first_staged_ready_seconds": 3.286222,
+      "staged_retained_events": 200,
+      "initial_staging_host_rejection": {
+        "deployment_id": "dpl_NEziAsD5dX39XXSKK63TPWsAMKhd",
+        "status": 400,
+        "cause": "Exact-host allowlist excluded generated staging hostname",
+        "promoted": false
+      }
+    }
+  ]
+}

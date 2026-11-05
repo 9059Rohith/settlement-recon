@@ -393,3 +393,7 @@ The new release passed192local Python tests (6optional integration skips) and4No
 ### Real market replay
 
 [Historical FX replay](https://rohith-settlement-recon.vercel.app/workspace/history) derives exact cross-rates from the original ECB archive. The reproducible benchmark independently verified 54,464 pair observations across 214 windows. See [method and measured results](docs/ecb-replay.md).
+
+### Current cross-project reliability verification
+
+The latest DataGuard, FluxLake, and PipeFoundry fixes were staged and promoted. All four public apps passed 14 API checks and eight browser workflows at mobile and desktop widths. [Release evidence, fault cases, and interview notes](docs/openfx-reliability-release.md)

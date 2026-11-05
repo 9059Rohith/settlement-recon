@@ -2,6 +2,8 @@
 
 The requirements below come from the supplied Data Engineering Intern and DevOps Engineering Intern postings. Evidence is labeled as an executed workflow, a local drill, or a configuration check. The public demos and versioned reports describe different environments where applicable.
 
+The latest reliability release fixes DataGuard startup readiness, adds transaction-safe FluxLake connection recovery and deployment-host support, and preserves PipeFoundry workflows during provider outages. All 14 final public API checks and eight mobile/desktop workflows passed. [Latest release verification](openfx-reliability-release.md)
+
 ## Data Engineering
 
 | Job requirement | Project evidence |
@@ -46,4 +48,4 @@ A global percentile ranking for these projects remains unverified. The traceabil
 
 The initial PipeFoundry Windows suite passed 107 tests with 23 skips. A later isolated PostgreSQL 18.2 run passed 126 tests with four skips for two inapplicable SQLite variants and two opt-ins. Its Linux Airflow/Spark workload was exercised separately through the generated DAG. The generator fix was staged, verified, and promoted to the public domain. [Full execution and release evidence](https://github.com/9059Rohith/pipefoundry/blob/main/docs/airflow-spark-proof.md)
 
-The deeper production check observed two temporary DataGuard readiness HTTP 503 responses followed by three consecutive HTTP 200 responses. Its public database-backed workspace returned HTTP 200. The other three readiness routes returned HTTP 200. PipeFoundry’s legacy control-plane `/demo` route returned its expected HTTP 401, while its public workbench review workflow passed. [Durable readiness and data observations](../evidence/openfx-durable-live-smoke.json)
+The earlier pre-fix production check observed two temporary DataGuard readiness HTTP 503 responses followed by three consecutive HTTP 200 responses. Its public database-backed workspace returned HTTP 200. The other three readiness routes returned HTTP 200. PipeFoundry’s legacy control-plane `/demo` route returned its expected HTTP 401, while its public workbench review workflow passed. [Durable readiness and data observations](../evidence/openfx-durable-live-smoke.json)

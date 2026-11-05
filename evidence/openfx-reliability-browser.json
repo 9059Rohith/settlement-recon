@@ -1,0 +1,150 @@
+{
+  "settlement": [
+    {
+      "width": 390,
+      "verified": "ECB USD/INR replay returned the four expected observations",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Historical FX replay | Settlement Recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/history",
+      "screenshot": "settlement-390.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    },
+    {
+      "width": 1440,
+      "verified": "ECB USD/INR replay returned the four expected observations",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Historical FX replay | Settlement Recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/history",
+      "screenshot": "settlement-1440.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    }
+  ],
+  "fluxlake": [
+    {
+      "width": 390,
+      "verified": "Retained publication audit agreed and historical evidence remained visible",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Replay audit \u00b7 FluxLake",
+      "url": "https://rohith-fluxlake.vercel.app/workspace/replay",
+      "screenshot": "fluxlake-390.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    },
+    {
+      "width": 1440,
+      "verified": "Retained publication audit agreed and historical evidence remained visible",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Replay audit \u00b7 FluxLake",
+      "url": "https://rohith-fluxlake.vercel.app/workspace/replay",
+      "screenshot": "fluxlake-1440.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    }
+  ],
+  "dataguard": [
+    {
+      "width": 390,
+      "verified": "500-repository baseline published and strict replay showed both expected counts",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Quality checks \u2014 DataGuard",
+      "url": "https://rohith-dataguard.vercel.app/console/checks",
+      "screenshot": "dataguard-390.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    },
+    {
+      "width": 1440,
+      "verified": "500-repository baseline published and strict replay showed both expected counts",
+      "errors": [],
+      "consoleErrors": [],
+      "expectedProviderErrors": [],
+      "providerFailures": [],
+      "title": "Quality checks \u2014 DataGuard",
+      "url": "https://rohith-dataguard.vercel.app/console/checks",
+      "screenshot": "dataguard-1440.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    }
+  ],
+  "pipefoundry": [
+    {
+      "width": 390,
+      "verified": "Valid metric definitions, typed validation, CronJob manifest, and rollback evidence",
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()"
+      ],
+      "expectedProviderErrors": [
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()"
+      ],
+      "providerFailures": [
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/github?repo=9059Rohith%2Fpipefoundry&view=runs",
+          "status": 429
+        },
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/github?repo=9059Rohith%2Fpipefoundry&view=workflows",
+          "status": 429
+        },
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/github?repo=9059Rohith%2Fpipefoundry&view=repository",
+          "status": 429
+        }
+      ],
+      "title": "Release review \u00b7 PipeFoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/workbench/review",
+      "screenshot": "pipefoundry-390.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    },
+    {
+      "width": 1440,
+      "verified": "Valid metric definitions, typed validation, CronJob manifest, and rollback evidence",
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()"
+      ],
+      "expectedProviderErrors": [
+        "Failed to load resource: the server responded with a status of 429 ()",
+        "Failed to load resource: the server responded with a status of 429 ()"
+      ],
+      "providerFailures": [
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/github?repo=9059Rohith%2Fpipefoundry&view=workflows",
+          "status": 429
+        },
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/github?repo=9059Rohith%2Fpipefoundry&view=runs",
+          "status": 429
+        }
+      ],
+      "title": "Release review \u00b7 PipeFoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/workbench/review",
+      "screenshot": "pipefoundry-1440.png",
+      "browser": "Chromium 1248",
+      "browserPlugin": "Browser plugin not available"
+    }
+  ]
+}
