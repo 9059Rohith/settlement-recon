@@ -1,0 +1,127 @@
+{
+  "checked_at_utc": "2026-11-05T05:49:44.372220+00:00",
+  "scope": "Public readiness and durable public data reads after PipeFoundry production promotion",
+  "results": [
+    {
+      "project": "Settlement Recon",
+      "url": "https://rohith-settlement-recon.vercel.app/readyz",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd",
+      "response_keys": [
+        "status"
+      ]
+    },
+    {
+      "project": "FluxLake",
+      "url": "https://rohith-fluxlake.vercel.app/ready",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd",
+      "response_keys": [
+        "status"
+      ]
+    },
+    {
+      "project": "FluxLake data",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/overview",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "9f3a5a53ad10803b2c77e9e83ea1661f8b60e7cfdc3039b1dc4590350385d933",
+      "response_keys": [
+        "counts",
+        "latest_run",
+        "event_types",
+        "recent",
+        "source_url",
+        "source_docs",
+        "scope",
+        "observed_at"
+      ]
+    },
+    {
+      "project": "DataGuard",
+      "url": "https://rohith-dataguard.vercel.app/ready",
+      "passed": false,
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    {
+      "project": "DataGuard data",
+      "url": "https://rohith-dataguard.vercel.app/api/quality/workspace",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "8451f6953cba64ff1aae294a7535f181185a9535b3383556ce168c1ed2c0c256",
+      "response_keys": [
+        "captures",
+        "contract",
+        "actions",
+        "restored",
+        "operator",
+        "generated_at",
+        "storage",
+        "source_policy"
+      ]
+    },
+    {
+      "project": "PipeFoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/health/ready",
+      "status": 200,
+      "passed": true,
+      "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd",
+      "response_keys": [
+        "status"
+      ]
+    },
+    {
+      "project": "PipeFoundry data",
+      "url": "https://rohith-pipefoundry.vercel.app/demo",
+      "passed": false,
+      "error": "HTTP Error 401: Unauthorized"
+    }
+  ],
+  "dataguard_readiness_followup": [
+    {
+      "attempt": 1,
+      "at_utc": "2026-11-05T05:50:28.223289+00:00",
+      "status": 503,
+      "ready": false
+    },
+    {
+      "attempt": 2,
+      "at_utc": "2026-11-05T05:50:32.644094+00:00",
+      "status": 200,
+      "ready": true
+    },
+    {
+      "attempt": 3,
+      "at_utc": "2026-11-05T05:50:35.896772+00:00",
+      "status": 200,
+      "ready": true
+    },
+    {
+      "attempt": 4,
+      "at_utc": "2026-11-05T05:50:38.664200+00:00",
+      "status": 200,
+      "ready": true
+    }
+  ],
+  "protected_endpoint_classification": {
+    "url": "https://rohith-pipefoundry.vercel.app/demo",
+    "observed": 401,
+    "expected": 401,
+    "scope": "Protected legacy control-plane endpoint. Initial generic checker incorrectly expected public access."
+  },
+  "assessment": {
+    "observed_dataguard_readiness": [
+      503,
+      503,
+      200,
+      200,
+      200
+    ],
+    "consecutive_final_ready_responses": 3,
+    "cold_start_readiness_transients_retained": true,
+    "pipefoundry_legacy_demo_expected_authentication": true,
+    "public_workspace_reads_verified": true
+  }
+}
