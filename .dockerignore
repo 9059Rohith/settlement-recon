@@ -10,5 +10,15 @@ infra/.terraform
 *.db
 .vercel
 .ruff_cache
-tests
 docs
+.runtime
+**/.env*
+**/*.key
+**/*.pem
+**/*.pfx
+**/.terraform/**
+**/*.tfstate*
+**/*.tfvars*
+**/*.tfplan
+**/.venv*/**
+/tmp/

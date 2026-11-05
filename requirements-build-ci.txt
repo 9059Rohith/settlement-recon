@@ -1,0 +1,16 @@
+# Build-only verification tools; never copied to runtime.
+bandit==1.9.4
+colorama==0.4.6
+hypothesis==6.170.14
+iniconfig==2.3.1
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.3
+pluggy==1.7.0
+pygments==2.21.0
+pytest==9.2.0
+pyyaml==6.0.3
+rich==15.0.0
+ruff==0.17.3
+sortedcontainers==2.4.0
+stevedore==5.9.1
