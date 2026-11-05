@@ -1,6 +1,14 @@
 /* Financial presentation must not coerce exact decimal strings into IEEE-754 Numbers. */
 (function (root) {
   "use strict";
+  function retryAfterSeconds(value, now = Date.now()) {
+    if (typeof value !== "string") return 0;
+    const header = value.trim();
+    const seconds = /^\d+$/.test(header)
+      ? Number(header)
+      : (Date.parse(header) - now) / 1000;
+    return Number.isFinite(seconds) && seconds > 0 ? Math.ceil(seconds) : 0;
+  }
   function formatExactDecimal(value) {
     const text = String(value);
     if (!/^-?\d+(\.\d+)?$/.test(text)) return text;
@@ -50,6 +58,7 @@
     formatExactDecimal,
     inlineTokens,
     formatCompactDecimal,
+    retryAfterSeconds,
   });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.ReconFormat = api;

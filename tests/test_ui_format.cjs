@@ -4,7 +4,18 @@ const {
   formatExactDecimal,
   inlineTokens,
   formatCompactDecimal,
+  retryAfterSeconds,
 } = require("../src/settlement_recon/workspace_format.js");
+
+test("provider HTTP-date cooldowns stay finite and cannot enable early resubmission", () => {
+  const now = Date.UTC(2026, 10, 5, 12, 0, 0);
+  assert.equal(retryAfterSeconds("Thu, 05 Nov 2026 12:01:30 GMT", now), 90);
+  assert.equal(retryAfterSeconds("60", now), 60);
+  assert.equal(retryAfterSeconds("Infinity", now), 0);
+  assert.equal(retryAfterSeconds("-5", now), 0);
+  assert.equal(retryAfterSeconds("Thu, 05 Nov 2026 11:59:00 GMT", now), 0);
+  assert.equal(retryAfterSeconds(null, now), 0);
+});
 
 test("compact risk values explicitly truncate without losing integer precision", () => {
   assert.equal(

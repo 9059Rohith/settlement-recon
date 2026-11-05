@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import os
+import secrets
 import threading
 import time
 from datetime import UTC, date, datetime
@@ -126,10 +127,10 @@ def provider_retry_delay(value):
 
 
 def model_request(client, provider, payload, budget):
-    """One shared transient retry; no provider switch, secret logging or tool replay."""
+    """Two shared bounded retries; no provider switch, secret logging or tool replay."""
     while True:
         remaining = budget["deadline"] - time.monotonic()
-        if remaining <= 0 or budget["requests"] >= 4:
+        if remaining <= 0 or budget["requests"] >= 6:
             raise HTTPException(
                 503,
                 "AI investigation request budget reached; retry later",
@@ -144,6 +145,12 @@ def model_request(client, provider, payload, budget):
                 json=payload,
                 timeout=min(20, remaining),
             )
+            if time.monotonic() >= budget["deadline"]:
+                raise HTTPException(
+                    503,
+                    "AI investigation request budget reached; retry later",
+                    headers={"Retry-After": "60"},
+                )
             delay = provider_retry_delay(response.headers.get("Retry-After", ""))
             if response.status_code in {429, 500, 502, 503, 504} and delay is not None:
                 LOGGER.warning("AI upstream requested retry status=%s", response.status_code)
@@ -176,10 +183,13 @@ def model_request(client, provider, payload, budget):
                 budget["requests"],
             )
             transient = True
-        if transient and budget["retry_available"] and budget["deadline"] - time.monotonic() > 1:
-            budget["retry_available"] = False
-            time.sleep(0.5)
-            continue
+        retries = budget.get("retries", 0)
+        if transient and retries < 2 and budget["requests"] < 6:
+            delay = 2**retries + secrets.randbelow(101) / 1000
+            if budget["deadline"] - time.monotonic() > delay + 1:
+                budget["retries"] = retries + 1
+                time.sleep(delay)
+                continue
         raise HTTPException(
             503,
             "AI provider temporarily unavailable; retry later. No data was changed.",
@@ -505,7 +515,7 @@ def install(app, service, authenticate, writer, demo_secret=""):
         ]
 
         trace = []
-        budget = {"deadline": time.monotonic() + 60, "retry_available": True, "requests": 0}
+        budget = {"deadline": time.monotonic() + 60, "retries": 0, "requests": 0}
 
         with httpx.Client(timeout=40, follow_redirects=False) as client:
             for step in range(3):

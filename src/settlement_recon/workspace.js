@@ -79,7 +79,7 @@ async function api(path, options = {}) {
         ? data.detail
         : "The service could not complete this request.",
     );
-    error.retryAfter = Number(response.headers.get("Retry-After")) || 0;
+    error.retryAfter = ReconFormat.retryAfterSeconds(response.headers.get("Retry-After"));
     error.status = response.status;
     throw error;
   }

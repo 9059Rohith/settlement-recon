@@ -5,8 +5,9 @@ upstream status/exception was not retained by the old generic handler, so the
 specific cause is unconfirmed. A successful earlier request does not establish
 that every future provider request will complete.
 
-The reference-rate agent now has one transient retry shared across the whole
-investigation, up to three model rounds and four provider attempts. HTTP
+The reference-rate agent now has two transient retries shared across the whole
+investigation, up to three model rounds and six provider attempts. The waits
+increase from one to two seconds, with at most 100 ms of jitter. HTTP
 500/502/503/504 and HTTPX network/timeout errors can use that allowance.
 An exhausted transient failure returns HTTP 503 with Retry-After; quota errors
 remain HTTP 429. A valid positive-seconds or future HTTP-date Retry-After is
@@ -14,7 +15,9 @@ propagated without an early retry. Other HTTP errors and malformed protocol
 responses remain errors, never replacement analyses.
 
 Before each attempt, a monotonic 60-second scheduling budget is checked; the
-HTTPX timeout is at most 20 seconds or the remaining budget. These are blocking
+HTTPX timeout is at most 20 seconds or the remaining budget. Retry scheduling
+reserves at least one second for the next response, and late successful responses
+are rejected. These are blocking
 client phase/inactivity timeouts and between-call checks, not hard wall-clock
 cancellation of an active socket. Gemini requests minimal reasoning, with the
 existing output-token bound. No alternative paid provider is selected on failure.
@@ -31,6 +34,10 @@ are not logged by this handling. Controlled fault regressions exercise the real
 service-status tool loop, exhausted recovery, HTTP 400, timeouts, Retry-After,
 expired budgets and credential/body redaction. Controlled responses are test
 faults; public source records remain actual dated reference observations.
+
+The form parses numeric and HTTP-date Retry-After values into a finite cooldown.
+Provider failures do not automatically resubmit a visitor's question or bypass
+the persistent public allowance. Retry delays do not become fabricated answers.
 
 See [the portfolio audit](openfx-interview-readiness.md) for final deployment and
 live verification results. Provider availability and the semantic accuracy of

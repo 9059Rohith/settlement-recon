@@ -25,7 +25,8 @@ def provider_client(post):
 
 
 @pytest.mark.parametrize("fault", [500, 502, 503, 504, "timeout"])
-def test_readonly_agent_recovers_one_transient_fault(tmp_path, monkeypatch, fault):
+@pytest.mark.parametrize("failures", [1, 2])
+def test_readonly_agent_recovers_transient_faults(tmp_path, monkeypatch, fault, failures):
     from settlement_recon import workspace
 
     monkeypatch.setenv("GEMINI_API_KEY", "unit-recovery-key-never-sent")
@@ -34,12 +35,12 @@ def test_readonly_agent_recovers_one_transient_fault(tmp_path, monkeypatch, faul
 
     def post(_client, url, **kwargs):
         calls.append(kwargs)
-        if len(calls) == 1:
+        if len(calls) <= failures:
             if fault == "timeout":
                 raise httpx.ReadTimeout("secret-provider-body")
             return httpx.Response(fault, request=httpx.Request("POST", url))
         message = {"role": "assistant", "content": "The observed service has no live bank feed."}
-        if len(calls) == 2:
+        if len(calls) == failures + 1:
             message = {
                 "role": "assistant",
                 "tool_calls": [
@@ -65,12 +66,12 @@ def test_readonly_agent_recovers_one_transient_fault(tmp_path, monkeypatch, faul
         )
     assert response.status_code == 200, response.text
     assert response.json()["tools"][0]["name"] == "service_status"
-    assert len(calls) == 3
+    assert len(calls) == failures + 2
     assert all(call["json"]["reasoning_effort"] == "minimal" for call in calls)
     assert all(call["timeout"] <= 20 for call in calls)
 
 
-@pytest.mark.parametrize("status,expected,attempts", [(503, 503, 2), (400, 502, 1)])
+@pytest.mark.parametrize("status,expected,attempts", [(503, 503, 3), (400, 502, 1)])
 def test_provider_failures_are_bounded_and_redacted(
     tmp_path, monkeypatch, caplog, status, expected, attempts
 ):
@@ -135,3 +136,70 @@ def test_provider_retry_after_is_not_ignored(monkeypatch, delay):
     assert error.value.status_code == 503
     assert error.value.headers["Retry-After"] == delay
     assert len(calls) == 1
+
+
+def test_retry_capacity_is_shared_across_model_turns(monkeypatch):
+    from settlement_recon import workspace
+
+    statuses = iter([503, 200, 503, 200, 503])
+    sent, waits = [], []
+    monkeypatch.setattr(workspace.time, "sleep", waits.append)
+
+    def handle(request):
+        sent.append(request)
+        return httpx.Response(next(statuses), json={"ok": True})
+
+    budget = {"deadline": workspace.time.monotonic() + 60, "requests": 0, "retry_available": True}
+    provider = {"endpoint": "https://example.invalid", "key": "not-a-real-key"}
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        assert workspace.model_request(client, provider, {}, budget).status_code == 200
+        assert workspace.model_request(client, provider, {}, budget).status_code == 200
+        with pytest.raises(HTTPException) as error:
+            workspace.model_request(client, provider, {}, budget)
+    assert error.value.status_code == 503
+    assert len(sent) == 5
+    assert len(waits) == 2
+    assert 1 <= waits[0] <= 1.1
+    assert 2 <= waits[1] <= 2.1
+
+
+def test_short_deadline_does_not_sleep_and_retry(monkeypatch):
+    from settlement_recon import workspace
+
+    waits, sent = [], []
+    monkeypatch.setattr(workspace.time, "sleep", waits.append)
+
+    def handle(request):
+        sent.append(request)
+        return httpx.Response(503)
+
+    budget = {"deadline": workspace.time.monotonic() + 0.5, "requests": 0, "retry_available": True}
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(HTTPException) as error:
+            workspace.model_request(
+                client, {"endpoint": "https://example.invalid", "key": "x"}, {}, budget
+            )
+    assert error.value.status_code == 503
+    assert len(sent) == 1
+    assert not waits
+
+
+def test_late_provider_success_cannot_escape_deadline(monkeypatch):
+    from settlement_recon import workspace
+
+    clock = [0.0]
+    monkeypatch.setattr(workspace.time, "monotonic", lambda: clock[0])
+
+    def handle(request):
+        clock[0] = 61.0
+        return httpx.Response(200, json={"ok": True})
+
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(HTTPException) as error:
+            workspace.model_request(
+                client,
+                {"endpoint": "https://example.invalid", "key": "x"},
+                {},
+                {"deadline": 60.0, "requests": 0, "retry_available": True},
+            )
+    assert error.value.status_code == 503
