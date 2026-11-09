@@ -2183,3 +2183,5 @@ dialog p {
 @keyframes atlas-arrive { from { transform: scale(1.035); } to { transform: scale(1); } }
 @keyframes atlas-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes atlas-plate-reveal { from { opacity: .68; } to { opacity: 1; } }
+
+.fixing-desk{margin-top:24px}.fixing-policy,.fixing-record{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.fixing-record{border:1px solid var(--line,#cbd5e1);border-radius:12px;padding:18px;margin:18px 0}.fixing-record legend{font-weight:700;padding:0 8px}.fixing-actions{display:flex;gap:12px;flex-wrap:wrap}.fixing-desk label{display:grid;gap:6px}.fixing-desk input,.fixing-desk select{width:100%;min-width:0}.fixing-desk td,.fixing-desk p{overflow-wrap:anywhere}@media(max-width:700px){.fixing-policy,.fixing-record{grid-template-columns:1fr}.fixing-actions>button{width:100%}}

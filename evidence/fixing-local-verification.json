@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-09",
+  "pytest": {
+    "passed": 246,
+    "skipped": 6
+  },
+  "new_tests_red_failures": 16,
+  "node_existing_ui_tests": 5,
+  "ruff_check": "passed",
+  "ruff_format": "passed",
+  "bandit_medium_high": "passed",
+  "dependency_audit": "No known vulnerabilities found in pinned runtime requirements; advisory query succeeded",
+  "browser": {
+    "desktop": "1440x1000",
+    "mobile": "390x844",
+    "prior_quote": true,
+    "download_readback": true,
+    "input_edit_invalidates_export": true,
+    "stale_policy_blocks_total": true,
+    "page_errors": []
+  },
+  "independent_review": "Stale-form evidence issue found and corrected with revision guard; no remaining important findings"
+}

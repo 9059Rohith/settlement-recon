@@ -650,6 +650,36 @@ def install(app, service, authenticate, writer, demo_secret=""):
 
         return load_archive().source()
 
+    @app.get("/workspace/assets/fixing.js", include_in_schema=False)
+    def fixing_script():
+        return Response(
+            Path(__file__).with_name("fixing.js").read_text(encoding="utf-8"),
+            media_type="application/javascript",
+        )
+
+    @app.post("/workspace/api/fixing")
+    async def fixing_analysis(request: Request):
+        from pydantic import ValidationError
+
+        from settlement_recon.fixing import parse_fixing, value_at_fixing
+        from settlement_recon.history import load_archive
+
+        same_origin(request, max_bytes=32768)
+        raw = bytearray()
+        async for chunk in request.stream():
+            raw.extend(chunk)
+            if len(raw) > 32768:
+                raise HTTPException(413, "Fixing request exceeds 32 KB")
+        try:
+            body = parse_fixing(raw)
+            return value_at_fixing(load_archive(), body)
+        except (ValidationError, ValueError, UnicodeError, RecursionError) as error:
+            raise HTTPException(
+                422,
+                "Use 1-50 unique records, positive decimal-string amounts, ISO dates, "
+                "archive currencies, 0-6 rounding places, and 0-10 calendar-day quote age",
+            ) from error
+
     @app.get("/workspace/api/history")
     def historical_replay(
         start: date,

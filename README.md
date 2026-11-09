@@ -1,5 +1,11 @@
 # Settlement Recon
 
+**Historical fixing desk (9 November 2026):** value your own dated records against
+actual archived ECB quotes, reject stale/missing pairs, prevent future-quote
+leakage, and reconcile row-versus-total rounding with exact arithmetic.
+[Open the working desk](https://rohith-settlement-recon.vercel.app/workspace/history#fixing-title)
+· [Implementation and measured verification](docs/historical-fixing-desk.md).
+
 **Latest portfolio verification (5 Nov 2026):** PipeFoundry's real Gemini 3.1 inference and automatic 3.5-to-3.1 recovery were verified on public HTTPS; DataGuard uses the healthy free 3.1 pool. [Live proof, restored configuration, all-app retests and account blocker](docs/backup-live-verification.md).
 
 **Earlier AI recovery release (5 Nov 2026):** Shared transient retries, deadline checks and correct provider cooldowns are deployed. [Hosted test receipts, live retests, free-model fallback scope and GitHub account blocker](docs/ai-recovery-release.md).
