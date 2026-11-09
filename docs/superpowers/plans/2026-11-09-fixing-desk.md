@@ -12,7 +12,7 @@
 - [x] Implement pure valuation and bounded route; keep existing authentication and public AI limits.
 - [x] Add usable row-entry/validation, visible evidence and downloadable report in the existing visual style.
 - [x] Run full tests, lint, formatting, JS checks, dependency/security checks, and a real-archive benchmark.
-- [ ] Stage the existing free Vercel project, verify the new public workflow, then promote and publish exact evidence.
+- [x] Attempt the existing free Vercel staged release; record the actual account-wide fair-use rejection and all four disabled public URLs. No build/promotion was possible. Source and local verification were published instead.
 
 **Portfolio coordination:** Parallel agents own FluxLake portable replay evidence, DataGuard policy/source attribution, and PipeFoundry pipeline rehearsal in their separate repositories. Existing unrelated files are preserved.
 

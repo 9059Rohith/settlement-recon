@@ -1,9 +1,15 @@
 # Settlement Recon
 
+> **9 November 2026 status:** the new upgrade is implemented and verified locally.
+> Vercel has blocked the hosting team for fair-use limits; all four existing demo
+> URLs currently return `402 DEPLOYMENT_DISABLED`. No new public release is claimed.
+> [Current feature, tests and precise hosting blocker](docs/upgrade-20261109.md).
+
+
 **Historical fixing desk (9 November 2026):** value your own dated records against
 actual archived ECB quotes, reject stale/missing pairs, prevent future-quote
 leakage, and reconcile row-versus-total rounding with exact arithmetic.
-[Open the working desk](https://rohith-settlement-recon.vercel.app/workspace/history#fixing-title)
+[Desk route (hosting currently blocked)](https://rohith-settlement-recon.vercel.app/workspace/history#fixing-title)
 · [Implementation and measured verification](docs/historical-fixing-desk.md).
 
 **Latest portfolio verification (5 Nov 2026):** PipeFoundry's real Gemini 3.1 inference and automatic 3.5-to-3.1 recovery were verified on public HTTPS; DataGuard uses the healthy free 3.1 pool. [Live proof, restored configuration, all-app retests and account blocker](docs/backup-live-verification.md).
