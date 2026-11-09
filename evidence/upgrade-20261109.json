@@ -44,5 +44,21 @@
       "error": "DEPLOYMENT_DISABLED"
     }
   ],
-  "ranking": "No global percentile, hiring outcome, institutional scale or availability guarantee claimed."
+  "ranking": "No global percentile, hiring outcome, institutional scale or availability guarantee claimed.",
+  "linux_image": {
+    "image_id": "sha256:4539dc2abf4e93741cba47613b08e97cf72c1c939f251a35521684400fe85ff7",
+    "configured_user": "10001:10001",
+    "tests": {
+      "passed": 246,
+      "skipped": 6,
+      "failures": 0,
+      "errors": 0,
+      "cases": 252
+    },
+    "runtime_smoke": {
+      "quote_date": "2025-01-03",
+      "report_sha256": "2530be021f905a147709c8e7b388ddac8f10c03563e24d7d193e4223a414740f"
+    },
+    "scope": "Local Linux image; read-only root filesystem and no network; DataGuard uses an in-memory initialization of its actual store"
+  }
 }
