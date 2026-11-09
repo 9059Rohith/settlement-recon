@@ -8,6 +8,10 @@ on or before each record date. It never looks ahead, invents a weekend quote or
 fills a missing currency. An over-age quote remains visible as stale but is not
 used in a total. Identity conversions need no external quote.
 
+This is calendar-date, end-of-day analysis. It does not establish whether that
+day's quote had been published at a particular intraday payment timestamp; no
+intraday availability or execution-timing claim is made.
+
 Amounts are visitor-authored inputs, not claimed customer payment records.
 Reference rates are informational, not bank settlement evidence or executable
 prices. The original ECB archive is pinned byte-for-byte and ends on
